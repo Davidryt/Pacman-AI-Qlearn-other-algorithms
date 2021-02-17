@@ -1,3 +1,4 @@
+
 from __future__ import print_function
 # bustersAgents.py
 # ----------------
@@ -260,114 +261,6 @@ class BasicAgentAA(BustersAgent):
         print("Score: ", gameState.getScore())
         
         
-    def getcosts(self, gameState, cost):
-        
-        if Directions.WEST in legal:  cost+1
-        if Directions.EAST in legal: move = Directions.EAST
-        if Directions.NORTH in legal:   move = Directions.NORTH
-        if Directions.SOUTH in legal: move = Directions.SOUTH
-        
-    def getCostOfActions(self, actions):
-        x,y= self.getStartState()[0]
-        cost = 0
-        for action in actions:
-            # figure out the next state and see whether it's legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
-                return 999999
-            cost += 1
-        return cost
-    
-    
-    class Node:
-        # Initialize the class
-        def __init__(self, position:(), parent:()):
-            self.position = position
-            self.parent = parent
-            self.g = 0 # Distance to start node
-            self.h = 0 # Distance to goal node
-            self.f = 0 # Total cost
-        # Compare nodes
-        def __eq__(self, other):
-            return self.position == other.position
-        # Sort nodes
-        def __lt__(self, other):
-             return self.f < other.f
-        # Print node
-        def __repr__(self):
-            return ('({0},{1})'.format(self.position, self.f))
-    
-    
-    def add_to_open(self, opened, neighbor):
-        for node in opened:
-            if (neighbor == node and neighbor.f >= node.f):
-                return False
-        return True
-
-    
-    def aStarSearch(self, gameState, pos):
-        opened = []
-        visited = []
-
-        start_node = self.Node(gameState.getPacmanPosition(), None)
-        goal_node = self.Node(gameState.getGhostPositions()[pos], None)
-
-        opened.append(start_node)
-
-        while len(opened) > 0:
-            
-            
-            current_node = opened.pop(0)
-            
-            visited.append(current_node)
-            
-            if gameState.getGhostPositions()[pos] == current_node.position:
-                path = []
-                while current_node != start_node:
-                    path.append(current_node.position)
-                    current_node = current_node.parent
-                #path.append(start) 
-                # Return reversed path
-                return path[::-1]
-
-            (x, y) = current_node.position
-            
-            newPosition = []
-            direction = [Directions.WEST, Directions.EAST, Directions.SOUTH, Directions.NORTH]
-            
-            for d in direction:
-                if d == Directions.WEST: 
-                    newPosition = (x-1, y)
-                       
-                if d == Directions.EAST: 
-                    newPosition = (x+1, y)
-                        
-                if d == Directions.SOUTH: 
-                    newPosition = (x, y-1)
-                        
-                if d == Directions.NORTH: 
-                    newPosition = (x, y+1)
-                
-                #Check if wall in that position
-                if not gameState.getWalls()[newPosition[0]][newPosition[1]]:
-
-                    neighbor = self.Node(newPosition, current_node)
-                    if neighbor in visited:
-                        continue
-                    
-                    # Generate heuristics (Manhattan distance)
-                    neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
-                    neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
-                    neighbor.f = neighbor.g + neighbor.h
-                    
-                    if(self.add_to_open(opened, neighbor) == True):
-                    # Everything is green, add neighbor to open list
-                        opened.append(neighbor)
-
-        return False
-    
-            
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
@@ -386,20 +279,29 @@ class BasicAgentAA(BustersAgent):
         print("POSITION IN ARRAY ",pos)
         print("COORD ", coord)
         
-        pathToGoal = self.aStarSearch(gameState, pos)
+        resta1=coord[0]-pacpos[0]
+        resta2=coord[1]-pacpos[1]
+        if resta1>0: dire1=Directions.EAST
+        else: dire1=Directions.WEST
         
-        #print(pathToGoal[0])
-        print(gameState.getWalls()[pathToGoal[0][0]][pathToGoal[0][1]])
-            
-        if pathToGoal[0][0] == gameState.getPacmanPosition()[0]:
-            if pathToGoal[0][1] < gameState.getPacmanPosition()[1]: move = Directions.SOUTH
-            else: move = Directions.NORTH
-        else:
-            if pathToGoal[0][0] < gameState.getPacmanPosition()[0]: move = Directions.WEST
-            else: move = Directions.EAST
+        if resta2>0: dire2=Directions.NORTH
+        else: dire2=Directions.SOUTH
         
-        print(pathToGoal)
+        if abs(resta1)<abs(resta2): 
+            dire=dire2
+            direopt=dire1
+        else: 
+            dire=dire1
+            direopt=dire2
         
+        if dire in legal:  move = dire
+        #elif direopt in legal:  move = direopt
+        else:        
+            move_random = random.randint(0, 3)
+            if   ( move_random == 0 ) and Directions.WEST in legal:  move = Directions.WEST
+            if   ( move_random == 1 ) and Directions.EAST in legal: move = Directions.EAST
+            if   ( move_random == 2 ) and Directions.NORTH in legal:   move = Directions.NORTH
+            if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
         return move
 
     def printLineData(self, gameState):
@@ -412,3 +314,4 @@ class BasicAgentAA(BustersAgent):
             with open(path+"/log.txt",'a') as le:
                 le.write(linea+'\n')
         return linea
+
