@@ -1,3 +1,4 @@
+  
 from __future__ import print_function
 # bustersAgents.py
 # ----------------
@@ -259,25 +260,6 @@ class BasicAgentAA(BustersAgent):
         # Score
         print("Score: ", gameState.getScore())
         
-        
-    def getcosts(self, gameState, cost):
-        
-        if Directions.WEST in legal:  cost+1
-        if Directions.EAST in legal: move = Directions.EAST
-        if Directions.NORTH in legal:   move = Directions.NORTH
-        if Directions.SOUTH in legal: move = Directions.SOUTH
-        
-    def getCostOfActions(self, actions):
-        x,y= self.getStartState()[0]
-        cost = 0
-        for action in actions:
-            # figure out the next state and see whether it's legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
-                return 999999
-            cost += 1
-        return cost
     
     
     class Node:
@@ -299,7 +281,8 @@ class BasicAgentAA(BustersAgent):
             return ('({0},{1})'.format(self.position, self.f))
     
     
-    def add_to_open(self, opened, neighbor):
+    #Esta función comprueba si el nodo a esta ya en la lista para abrir
+    def can_open(self, opened, neighbor):
         for node in opened:
             if (neighbor == node and neighbor.f >= node.f):
                 return False
@@ -327,8 +310,8 @@ class BasicAgentAA(BustersAgent):
                 while current_node != start_node:
                     path.append(current_node.position)
                     current_node = current_node.parent
-                #path.append(start) 
-                # Return reversed path
+ 
+                #devolvemos el camino al reves
                 return path[::-1]
 
             (x, y) = current_node.position	#cogemos las coordenadas
@@ -349,20 +332,20 @@ class BasicAgentAA(BustersAgent):
                 if d == Directions.NORTH: 
                     newPosition = (x, y+1)
                 
-                #Check if wall in that position
+                #comprobamos si es una pared
                 if not gameState.getWalls()[newPosition[0]][newPosition[1]]:
 
                     neighbor = self.Node(newPosition, current_node)
                     if neighbor in visited:
                         continue
                     
-                    # Generate heuristics (Manhattan distance)
+                    # Genera la heuristica de los nodos (distancia Manhattan)
                     neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
                     neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
                     neighbor.f = neighbor.g + neighbor.h
                     
-                    if(self.add_to_open(opened, neighbor) == True):
-                    # Everything is green, add neighbor to open list
+                    if(self.can_open(opened, neighbor) == True):
+                    #si todo va bien se añade a la lista para abrir
                         opened.append(neighbor)
 
         return False
@@ -386,7 +369,7 @@ class BasicAgentAA(BustersAgent):
         print("POSITION IN ARRAY ",pos)
         print("COORD ", coord)
         
-        pathToGoal = self.aStarSearch(gameState, pos)	#path to goal calculation using astar
+        pathToGoal = self.aStarSearch(gameState, pos)	#el camno hasta el fantasma con A*
         
         #print(pathToGoal[0])
         print(gameState.getWalls()[pathToGoal[0][0]][pathToGoal[0][1]])
