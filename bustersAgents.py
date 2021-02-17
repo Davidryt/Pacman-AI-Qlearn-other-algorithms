@@ -307,22 +307,22 @@ class BasicAgentAA(BustersAgent):
 
     
     def aStarSearch(self, gameState, pos):
-        opened = []
-        visited = []
+        opened = []	#array de nodos por abrir
+        visited = []	#array de nodos visitados
 
-        start_node = self.Node(gameState.getPacmanPosition(), None)
-        goal_node = self.Node(gameState.getGhostPositions()[pos], None)
+        start_node = self.Node(gameState.getPacmanPosition(), None)		#el nodo inicial es la posicion actual
+        goal_node = self.Node(gameState.getGhostPositions()[pos], None)	#el nodo final el objetivo
 
-        opened.append(start_node)
+        opened.append(start_node)	#añadomos el nodo actual a la lista de operar
 
-        while len(opened) > 0:
+        while len(opened) > 0:	#repetir mientras queden nodos por operar/abrir
             
             
-            current_node = opened.pop(0)
+            current_node = opened.pop(0)	#obtenemos un nodo de la lista de por abrir
             
-            visited.append(current_node)
+            visited.append(current_node)	#y lo marcamos como visitado
             
-            if gameState.getGhostPositions()[pos] == current_node.position:
+            if gameState.getGhostPositions()[pos] == current_node.position:  #se acabo hemos llegado
                 path = []
                 while current_node != start_node:
                     path.append(current_node.position)
@@ -331,7 +331,7 @@ class BasicAgentAA(BustersAgent):
                 # Return reversed path
                 return path[::-1]
 
-            (x, y) = current_node.position
+            (x, y) = current_node.position	#cogemos las coordenadas
             
             newPosition = []
             direction = [Directions.WEST, Directions.EAST, Directions.SOUTH, Directions.NORTH]
@@ -371,34 +371,34 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        move = Directions.STOP
-        legal = gameState.getLegalActions(0) ##Legal position from the pacman
-        dist=999999
+        move = Directions.STOP #Default move: stop
+        legal = gameState.getLegalActions(0) ##List of Legal positions from the pacman
+        dist=999999 #initial dist infinite
         i=0
         for x in gameState.data.ghostDistances:
             if isinstance(x,int):
                 if x < dist:
-                    dist = x
-        pos= gameState.data.ghostDistances.index(dist)
-        pacpos= gameState.getPacmanPosition()
-        coord=gameState.getGhostPositions()[pos]
+                    dist = x		#this calculates the nearest ghost
+        pos= gameState.data.ghostDistances.index(dist)  #position of nearest ghost
+        pacpos= gameState.getPacmanPosition()         #pacman position
+        coord=gameState.getGhostPositions()[pos]	#coordinates of nearest ghost
         print("NEAREST GHOST IS ",dist)
         print("POSITION IN ARRAY ",pos)
         print("COORD ", coord)
         
-        pathToGoal = self.aStarSearch(gameState, pos)
+        pathToGoal = self.aStarSearch(gameState, pos)	#path to goal calculation using astar
         
         #print(pathToGoal[0])
         print(gameState.getWalls()[pathToGoal[0][0]][pathToGoal[0][1]])
             
-        if pathToGoal[0][0] == gameState.getPacmanPosition()[0]:
+        if pathToGoal[0][0] == gameState.getPacmanPosition()[0]:  #Se mueve siguiendo el pathtogoal especificado, no tiene mucho mas
             if pathToGoal[0][1] < gameState.getPacmanPosition()[1]: move = Directions.SOUTH
             else: move = Directions.NORTH
         else:
             if pathToGoal[0][0] < gameState.getPacmanPosition()[0]: move = Directions.WEST
             else: move = Directions.EAST
         
-        print(pathToGoal)
+        print("PathtoGoal",pathToGoal)
         
         return move
 
