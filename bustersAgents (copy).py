@@ -265,6 +265,33 @@ class BasicAgentAA(BustersAgent):
         print("Score: ", gameState.getScore())
         
         
+    def getcosts(self, gameState, cost)
+        
+        if Directions.WEST in legal:  cost+1
+        if Directions.EAST in legal: move = Directions.EAST
+        if Directions.NORTH in legal:   move = Directions.NORTH
+        if Directions.SOUTH in legal: move = Directions.SOUTH
+        
+    def getCostOfActions(self, actions):
+        x,y= self.getStartState()[0]
+        cost = 0
+        for action in actions:
+            # figure out the next state and see whether it's legal
+            dx, dy = Actions.directionToVector(action)
+            x, y = int(x + dx), int(y + dy)
+            if self.walls[x][y]:
+                return 999999
+            cost += 1
+        return cost
+        
+        
+    def aStarSearch(problem, heuristic=nullHeuristic, dist):
+
+        f = lambda path: problem.getCostOfActions([x[1] for x in path][1:]) + dist
+        h = lambda path: dist
+        pq = util.PriorityQueueWithFunction((f,h))
+        return generalGraphSearch(problem, pq)
+        
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
@@ -282,6 +309,8 @@ class BasicAgentAA(BustersAgent):
         print("NEAREST GHOST IS ",dist)
         print("POSITION IN ARRAY ",pos)
         print("COORD ", coord)
+        
+        totalcost= getcosts()
         
         resta1=coord[0]-pacpos[0]
         resta2=coord[1]-pacpos[1]
