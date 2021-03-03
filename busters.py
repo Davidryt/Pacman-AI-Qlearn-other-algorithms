@@ -106,17 +106,62 @@ class GameState(object):
     # 28,Local
 ################################################################################################################
 
-    def printLineData(self):
+    def printLineData(self, action):
 
         state = GameState(self)
-        linea = str(state.getPacmanPosition())+"," + str(state.getLegalPacmanActions()) + "," + str(state.getLivingGhosts()) + "," + \
-                str(state.getGhostPositions()) + "," + str(state.data.ghostDistances)
+        x = [0,0,0,0,0]
+        y = [0,0,0,0,0]
+        x[0], y[0] = state.getPacmanPosition()
+        gState = [0,0,0,0]
+        d = [0,0,0,0]
+        
+        n = 0
+        s = 0
+        w = 0
+        e = 0
+        
+        i = 0
+        
+        while (i < 4):
+            x[i+1], y[i+1] = state.getGhostPositions()[i]
+            if not state.getLivingGhosts()[i+1]:
+                gState[i] = 0
+                d[i] = 0
+            else:
+                gState[i] = 1
+                d[i] = self.getNoisyGhostDistances()[i]
+            i+=1
+        
+        i = 0
+        while (i < len(state.getLegalPacmanActions())):
+            if(state.getLegalPacmanActions()[i] == "North"):
+                n = 1
+            
+            if(state.getLegalPacmanActions()[i] == "South"):
+                s = 1
+            
+            if(state.getLegalPacmanActions()[i] == "East"):
+                e = 1
+            
+            if(state.getLegalPacmanActions()[i] == "West"):
+                w = 1
+            
+            i+=1
+        
+        linea = str(x[0]) + "," + str(y[0]) + "," + str(n) + "," + str(s) + "," + str(e) + "," + str(w) + "," + str(gState[0]) + "," + str(gState[1]) + "," + \
+                str(gState[2]) + "," + str(gState[3]) + "," + str(x[1]) + "," + str(y[1]) + "," + str(x[2]) + "," + str(y[2]) + "," + str(x[3]) + "," + str(y[3]) + "," + \
+                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(state.getScore()) + "," + str(action)
+                
         path='./'
-        # No se si numeric vale para multiples valores o tuplas
-        new_file_line = "@RELATION pacman-data-training\n\n\t@ATTRIBUTE pacman_position NUMERIC" \
-                        "\n\t@ATTRIBUTE legal_action {WEST,EAST,NORTH,SOUTH,STOP}\n\t@ATTRIBUTE living_ghosts NUMERIC" \
-                        "\n\t@ATTRIBUTE ghost_positions NUMERIC\n\t@ATTRIBUTE ghost_distances NUMERIC" \
-                        "\n\t@ATTRIBUTE final_choice {WEST,EAST,NORTH,SOUTH,STOP}"
+        
+        new_file_line = "@RELATION pacman-data-training\n\n\t@ATTRIBUTE pacman_positionX NUMERIC\n\t@ATTRIBUTE pacman_positionY NUMERIC" \
+                        "\n\t@ATTRIBUTE legal_north {0,1}\n\t@ATTRIBUTE legal_south {0,1}\n\t@ATTRIBUTE legal_east {0,1}\n\t@ATTRIBUTE legal_west {0,1}" \
+                        "\n\t@ATTRIBUTE living_ghost1 {0,1}\n\t@ATTRIBUTE living_ghost2 {0,1}\n\t@ATTRIBUTE living_ghost3 {0,1}\n\t@ATTRIBUTE living_ghost4 {0,1}" \
+                        "\n\t@ATTRIBUTE ghost1_positionX NUMERIC\n\t@ATTRIBUTE ghost1_positionY NUMERIC\n\t@ATTRIBUTE ghost2_positionX NUMERIC\n\t@ATTRIBUTE ghost2_positionY NUMERIC" \
+                        "\n\t@ATTRIBUTE ghost3_positionX NUMERIC\n\t@ATTRIBUTE ghost3_positionY NUMERIC\n\t@ATTRIBUTE ghost4_positionX NUMERIC\n\t@ATTRIBUTE ghost4_positionY NUMERIC" \
+                        "\n\t@ATTRIBUTE ghost1_distance NUMERIC\n\t@ATTRIBUTE ghost2_distance NUMERIC\n\t@ATTRIBUTE ghost3_distance NUMERIC\n\t@ATTRIBUTE ghost4_distance NUMERIC" \
+                        "\n\t@ATTRIBUTE score NUMERIC\n\t@ATTRIBUTE next_move {West,East,North,South,Stop}" \
+                        "\n\n@DATA"
         print("HELLO!!")
         if not os.path.exists(path+"/log.arff"):
             with open(path+"/log.arff",'w') as le:
@@ -152,7 +197,9 @@ class GameState(object):
 
         # Copy current state
         state = GameState(self)
-
+        
+        self.printLineData(action)
+        
         # Let agent's logic deal with its action's effects on the board
         if agentIndex == 0:  # Pacman is moving
             state.data._eaten = [False for i in range(state.getNumAgents())]
