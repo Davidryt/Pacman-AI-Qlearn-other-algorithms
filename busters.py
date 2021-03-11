@@ -91,7 +91,7 @@ class GameState(object):
     # Accessor methods: use these to access state data #
     ####################################################
     ghostDirections = {}
-
+    
 ################################################################################################################
 ################################################################################################################
 #Como debería quedar el fichero (ejemplo)
@@ -106,8 +106,7 @@ class GameState(object):
     # 28,Local
 ################################################################################################################
 
-    def printLineData(self, action):
-
+    def printLineData(self, action, scoreNext):
         state = GameState(self)
         x = [0,0,0,0,0]
         y = [0,0,0,0,0]
@@ -147,10 +146,18 @@ class GameState(object):
                 w = 1
             
             i+=1
+            
+            
+        scoreNext += state.getScore()
+
+        distanceFood = state.getDistanceNearestFood()
+        if(distanceFood == None):
+            distanceFood = 0
         
         linea = str(x[0]) + "," + str(y[0]) + "," + str(n) + "," + str(s) + "," + str(e) + "," + str(w) + "," + str(gState[0]) + "," + str(gState[1]) + "," + \
                 str(gState[2]) + "," + str(gState[3]) + "," + str(x[1]) + "," + str(y[1]) + "," + str(x[2]) + "," + str(y[2]) + "," + str(x[3]) + "," + str(y[3]) + "," + \
-                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(state.getScore()) + "," + str(action)
+                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(distanceFood) + "," + str(nearestFood[0]) + "," + \
+                str(nearestFood[1]) + "," + str(state.getScore()) + "," + str(scoreNext) + "," + str(action)
                 
         path='./'
         
@@ -160,8 +167,8 @@ class GameState(object):
                         "\n\t@ATTRIBUTE ghost1_positionX NUMERIC\n\t@ATTRIBUTE ghost1_positionY NUMERIC\n\t@ATTRIBUTE ghost2_positionX NUMERIC\n\t@ATTRIBUTE ghost2_positionY NUMERIC" \
                         "\n\t@ATTRIBUTE ghost3_positionX NUMERIC\n\t@ATTRIBUTE ghost3_positionY NUMERIC\n\t@ATTRIBUTE ghost4_positionX NUMERIC\n\t@ATTRIBUTE ghost4_positionY NUMERIC" \
                         "\n\t@ATTRIBUTE ghost1_distance NUMERIC\n\t@ATTRIBUTE ghost2_distance NUMERIC\n\t@ATTRIBUTE ghost3_distance NUMERIC\n\t@ATTRIBUTE ghost4_distance NUMERIC" \
-                        "\n\t@ATTRIBUTE score NUMERIC\n\t@ATTRIBUTE next_move {West,East,North,South,Stop}" \
-                        "\n\n@DATA"
+                        "\n\t@ATTRIBUTE food_distance NUMERIC\n\t@ATTRIBUTE food_position_x NUMERIC\n\t@ATTRIBUTE food_position_y NUMERIC\n\t@ATTRIBUTE score NUMERIC" \
+                        "\n\t@ATTRIBUTE score_siguiente NUMERIC\n\t@ATTRIBUTE next_move {West,East,North,South,Stop}\n\n@DATA"
         print("HELLO!!")
         if not os.path.exists(path+"/log.arff"):
             with open(path+"/log.arff",'w') as le:
@@ -198,7 +205,7 @@ class GameState(object):
         # Copy current state
         state = GameState(self)
         
-        self.printLineData(action)
+        
         
         # Let agent's logic deal with its action's effects on the board
         if agentIndex == 0:  # Pacman is moving
@@ -219,8 +226,11 @@ class GameState(object):
         # Check food eaten
         GhostRules.checkFoodEaten ( state, agentIndex )
 
+        
         # Book keeping
         state.data._agentMoved = agentIndex
+
+        self.printLineData(action, state.data.scoreChange)
         state.data.score += state.data.scoreChange
         p = state.getPacmanPosition()
         state.data.ghostDistances = [getNoisyDistance(p, state.getGhostPosition(i)) for i in range(1,state.getNumAgents())]
@@ -315,6 +325,7 @@ class GameState(object):
         """
         Returns the distance to the nearest food
         """
+        global nearestFood
         if(self.getNumFood() > 0):
             minDistance = 900000
             pacmanPosition = self.getPacmanPosition()
@@ -324,6 +335,8 @@ class GameState(object):
                         foodPosition = i, j
                         distance = util.manhattanDistance(pacmanPosition, foodPosition)
                         if distance < minDistance:
+                            print("\t" + str(i) + "," + str(j))
+                            nearestFood = i, j
                             minDistance = distance
             return minDistance
 
