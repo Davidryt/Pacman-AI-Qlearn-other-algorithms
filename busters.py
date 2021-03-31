@@ -149,15 +149,10 @@ class GameState(object):
             
             
         scoreNext += state.getScore()
-
-        distanceFood = state.getDistanceNearestFood()
-        if(distanceFood == None):
-            distanceFood = 0
         
         linea = str(x[0]) + "," + str(y[0]) + "," + str(n) + "," + str(s) + "," + str(e) + "," + str(w) + "," + str(gState[0]) + "," + str(gState[1]) + "," + \
                 str(gState[2]) + "," + str(gState[3]) + "," + str(x[1]) + "," + str(y[1]) + "," + str(x[2]) + "," + str(y[2]) + "," + str(x[3]) + "," + str(y[3]) + "," + \
-                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(distanceFood) + "," + str(nearestFood[0]) + "," + \
-                str(nearestFood[1]) + "," + str(state.getScore()) + "," + str(scoreNext) + "," + str(action)
+                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(state.getScore()) + "," + str(scoreNext) + "," + str(action)
                 
         path='./'
         
