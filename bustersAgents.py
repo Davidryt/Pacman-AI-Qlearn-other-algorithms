@@ -24,6 +24,10 @@ import inference
 import busters
 import os
 
+from wekaI import Weka
+
+
+
 class NullGraphics(object):
     "Placeholder for graphics"
     def initialize(self, state, isBlue = False):
@@ -76,6 +80,8 @@ class BustersAgent(object):
         self.inferenceModules = [inferenceType(a) for a in ghostAgents]
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
+        self.weka = Weka()
+        self.weka.start_jvm()
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -162,6 +168,43 @@ class RandomPAgent(BustersAgent):
         if   ( move_random == 2 ) and Directions.NORTH in legal:   move = Directions.NORTH
         if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
         return move
+
+        def chooseActionWeka(self, gameState):
+            state = gameState(self)
+            x = [0, 0, 0, 0, 0]
+            y = [0, 0, 0, 0, 0]
+            x[0], y[0] = state.getPacmanPosition()
+            gState = [0, 0, 0, 0]
+            d = [0, 0, 0, 0]
+            n = 0
+            s = 0
+            w = 0
+            e = 0
+            i = 0
+            while (i < 4):
+                x[i + 1], y[i + 1] = state.getGhostPositions()[i]
+                if not state.getLivingGhosts()[i + 1]:
+                    gState[i] = 0
+                    d[i] = 0
+                else:
+                    gState[i] = 1
+                    d[i] = self.getNoisyGhostDistances()[i]
+                i += 1
+            i = 0
+            while (i < len(state.getLegalPacmanActions())):
+                if (state.getLegalPacmanActions()[i] == "North"):
+                    n = 1
+                if (state.getLegalPacmanActions()[i] == "South"):
+                    s = 1
+                if (state.getLegalPacmanActions()[i] == "East"):
+                    e = 1
+                if (state.getLegalPacmanActions()[i] == "West"):
+                    w = 1
+                i += 1
+
+            linea = [x[0],y[0],n,s,e,w,gState[0],gState[1],gState[2],gState[3],x[1],y[1],x[2],y[2],x[3],y[3],x[4],y[4],d[0],d[3]]
+            a = self.weka.predict("./j48.model", linea , "./training_set.arff")
+            return move
         
 class GreedyBustersAgent(BustersAgent):
     "An agent that charges the closest ghost."
