@@ -102,7 +102,7 @@ class GameState(object):
     # 28,Local
 ################################################################################################################
 
-    def returnline():
+    def returnline(self, gameState):
         state = gameState
         x = [0,0,0,0,0,0]
         y = [0,0,0,0,0,0]
@@ -238,7 +238,7 @@ class GameState(object):
                 d[i] = 0
             i+=1
         
-        h = [x[0],y[0],n,s,e,w,x[1],y[1],x[2],y[2],x[3],y[3],x[4],y[4],d[0],d[1],d[2],d[3],d[4],x[5],y[5]]
+        h = [str(x[0]),str(y[0]),str(n),str(s),str(e),str(w),str(x[1]),str(y[1]),str(x[2]),str(y[2]),str(x[3]),str(y[3]),str(x[4]),str(y[4]),str(d[0]),str(d[1]),str(d[2]),str(d[3]),str(d[4]),str(x[5]),str(y[5])]
         return h
 
     def printLineData(self, action, scoreNext):

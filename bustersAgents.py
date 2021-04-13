@@ -20,9 +20,8 @@ from game import Agent
 from game import Directions
 from keyboardAgents import KeyboardAgent
 import inference
-import busters
+import busters as otro
 import os
-from busters import *
 
 from wekaI import Weka
 
@@ -110,9 +109,13 @@ class BustersAgent(object):
 
     def chooseAction(self, gameState):
         
-        h=returnline()
-        a = self.weka.predict("./Classifiers/j48-t1.model", h, "./Datos/training_tutorial1-classif.arff")
-        return Directions.STOP
+        h=gameState.returnline(gameState)
+        a = self.weka.predict("./Classifiers/MultiPercep-t1.model", h, "./Datos/training_tutorial1-classif.arff")
+        
+        if a not in gameState.getLegalPacmanActions():
+        	a = "Stop"
+        
+        return a
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     "An agent controlled by the keyboard that displays beliefs about ghost positions."
