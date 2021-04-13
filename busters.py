@@ -106,6 +106,7 @@ class GameState(object):
     # 28,Local
 ################################################################################################################
 
+
     def printLineData(self, action, scoreNext):
         state = GameState(self)
         x = [0,0,0,0,0]

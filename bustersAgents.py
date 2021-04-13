@@ -22,6 +22,7 @@ from keyboardAgents import KeyboardAgent
 import inference
 import busters
 import os
+from busters import *
 
 from wekaI import Weka
 
@@ -108,7 +109,7 @@ class BustersAgent(object):
         return self.chooseAction(gameState)
 
     def chooseAction(self, gameState):
-        state = GameState(self)
+        state = gameState
         x = [0,0,0,0,0,0]
         y = [0,0,0,0,0,0]
         x[0], y[0] = state.getPacmanPosition()
@@ -131,11 +132,11 @@ class BustersAgent(object):
                 d[i] = 0
             else:
                 gState[i] = 1
-                d[i] = self.getNoisyGhostDistances()[i]
+                d[i] = state.getNoisyGhostDistances()[i]
                 
                 if d[i] < d[closestGhost]:
                     closestGhost = i
-            if self.getNoisyGhostDistances()[i] == None:
+            if state.getNoisyGhostDistances()[i] == None:
                 d[i] = 0
             i+=1
         
@@ -155,11 +156,11 @@ class BustersAgent(object):
             
             i+=1
             
-            
-        scoreNext += state.getScore()
 
         d[4] = state.getDistanceNearestFood()
-        
+        global nearestFood
+        distanceFood=state.getDistanceNearestFood()
+        print(distanceFood)
         if(distanceFood == None):
             distanceFood = 0
             x[5] = 0
@@ -244,6 +245,7 @@ class BustersAgent(object):
             i+=1
         
         h = [x[0],y[0],n,s,e,w,x[1],y[1],x[2],y[2],x[3],y[3],x[4],y[4],d[0],d[1],d[2],d[3],d[4],x[5],y[5]]
+        h=returnline()
         a = self.weka.predict("./Classifiers/j48-t1.model", h, "./Datos/training_tutorial1-classif.arff")
         return Directions.STOP
 
