@@ -105,8 +105,145 @@ class GameState(object):
     # 12,Private
     # 28,Local
 ################################################################################################################
+    def returnline():
+        state = GameState(self)
+        x = [0,0,0,0,0,0]
+        y = [0,0,0,0,0,0]
+        x[0], y[0] = state.getPacmanPosition()
+        gState = [0,0,0,0]
+        d = [0,0,0,0,0]
+        
+        closestGhost = 0
+        
+        n = 0
+        s = 0
+        w = 0
+        e = 0
+        
+        i = 0
+        
+        while (i < 4):
+            x[i+1], y[i+1] = state.getGhostPositions()[i]
+            if not state.getLivingGhosts()[i+1]:
+                gState[i] = 0
+                d[i] = 0
+            else:
+                gState[i] = 1
+                d[i] = state.getNoisyGhostDistances()[i]
+                
+                if d[i] < d[closestGhost]:
+                    closestGhost = i
+            if state.getNoisyGhostDistances()[i] == None:
+                d[i] = 0
+            i+=1
+        
+        i = 0
+        while (i < len(state.getLegalPacmanActions())):
+            if(state.getLegalPacmanActions()[i] == "North"):
+                n = 1
+            
+            if(state.getLegalPacmanActions()[i] == "South"):
+                s = 1
+            
+            if(state.getLegalPacmanActions()[i] == "East"):
+                e = 1
+            
+            if(state.getLegalPacmanActions()[i] == "West"):
+                w = 1
+            
+            i+=1
+            
 
-    def printLineData(self, action, scoreNext):
+        d[4] = state.getDistanceNearestFood()
+        global nearestFood
+        distanceFood=state.getDistanceNearestFood()
+        print(distanceFood)
+        if(distanceFood == None):
+            distanceFood = 0
+            x[5] = 0
+            y[5] = 0
+        else:
+            x[5] = nearestFood[0]
+            y[5] = nearestFood[1]
+        
+        i = 0
+        while i<6:
+            if x[i]>0:
+                if x[i]>2:  
+                    if x[i]>5:
+                        if x[i]>8:
+                            if x[i]>12:
+                                if x[i]>15:
+                                    if x[i]>18:
+                                        x[i] = 7
+                                    else:
+                                        x[i] = 6
+                                else:
+                                    x[i] = 5
+                            else:
+                                x[i] = 4
+                        else:
+                            x[i] = 3
+                    else:
+                        x[i] = 2
+                else:
+                    x[i] = 1
+            else: 
+                x[i] = 0
+        
+            if y[i]>0:
+                if y[i]>2:  
+                    if y[i]>5:
+                        if y[i]>8:
+                            if y[i]>12:
+                                if y[i]>15:
+                                    if y[i]>18:
+                                        y[i] = 7
+                                    else:
+                                        y[i] = 6
+                                else:
+                                    y[i] = 5
+                            else:
+                                y[i] = 4
+                        else:
+                            y[i] = 3
+                    else:
+                        y[i] = 2
+                else:
+                    y[i] = 1
+            else: 
+                y[i] = 0
+            i+=1
+        
+        i = 0
+        while i<4:
+            if d[i]>0:
+                if d[i]>2:  
+                    if d[i]>5:
+                        if d[i]>8:
+                            if d[i]>12:
+                                if d[i]>15:
+                                    if d[i]>18:
+                                        d[i] = 7
+                                    else:
+                                        d[i] = 6
+                                else:
+                                    d[i] = 5
+                            else:
+                                d[i] = 4
+                        else:
+                            d[i] = 3
+                    else:
+                        d[i] = 2
+                else:
+                    d[i] = 1
+            else: 
+                d[i] = 0
+            i+=1
+        h = [x[0],y[0],n,s,e,w,x[1],y[1],x[2],y[2],x[3],y[3],x[4],y[4],d[0],d[1],d[2],d[3],d[4],x[5],y[5]]
+        return h
+   
+   def printLineData(self, action, scoreNext):
         state = GameState(self)
         x = [0,0,0,0,0]
         y = [0,0,0,0,0]
