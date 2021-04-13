@@ -1,0 +1,153 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     pacman-data-training-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>2, ifelse(A>5, ifelse(A>8, ifelse(A>12, ifelse(A>15, ifelse(A>18, 7, 6), 5), 4), 3), 2), 1), 0)-V-R1-2,11-18,24-25-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>5, ifelse(A>10, ifelse(A>15, ifelse(A>20, ifelse(A>25, ifelse(A>30, 7, 6), 5), 4), 3), 2), 1), 0)-V-R19-23,32-weka.filters.unsupervised.attribute.NumericToNominal-R1-2,11-25,32-weka.filters.unsupervised.attribute.Remove-R7-10,26-34
+Instances:    370
+Attributes:   22
+              pacman_positionX
+              pacman_positionY
+              legal_north
+              legal_south
+              legal_east
+              legal_west
+              ghost1_positionX
+              ghost1_positionY
+              ghost2_positionX
+              ghost2_positionY
+              ghost3_positionX
+              ghost3_positionY
+              ghost4_positionX
+              ghost4_positionY
+              ghost1_distance
+              ghost2_distance
+              ghost3_distance
+              ghost4_distance
+              food_distance
+              food_position_x
+              food_position_y
+              next_move
+Test mode:    user supplied test set:  size unknown (reading incrementally)
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+legal_east = 0
+|   pacman_positionX = 0: South (0.0)
+|   pacman_positionX = 1: South (25.0)
+|   pacman_positionX = 2: South (0.0)
+|   pacman_positionX = 3
+|   |   legal_west = 0
+|   |   |   ghost2_positionY = 0: South (0.0)
+|   |   |   ghost2_positionY = 1: South (4.0)
+|   |   |   ghost2_positionY = 2: South (0.0)
+|   |   |   ghost2_positionY = 3: North (3.0)
+|   |   |   ghost2_positionY = 4: South (0.0)
+|   |   |   ghost2_positionY = 5: South (0.0)
+|   |   |   ghost2_positionY = 6: South (0.0)
+|   |   |   ghost2_positionY = 7: South (0.0)
+|   |   legal_west = 1: South (7.0)
+|   pacman_positionX = 4: North (14.0/1.0)
+|   pacman_positionX = 5
+|   |   legal_west = 0: North (3.0)
+|   |   legal_west = 1: South (3.0)
+|   pacman_positionX = 6: North (11.0/1.0)
+|   pacman_positionX = 7
+|   |   ghost1_positionX = 0: North (0.0)
+|   |   ghost1_positionX = 1: South (2.0)
+|   |   ghost1_positionX = 2: North (0.0)
+|   |   ghost1_positionX = 3: North (0.0)
+|   |   ghost1_positionX = 4: North (0.0)
+|   |   ghost1_positionX = 5: North (8.0/1.0)
+|   |   ghost1_positionX = 6: North (0.0)
+|   |   ghost1_positionX = 7: North (0.0)
+legal_east = 1
+|   legal_west = 0
+|   |   ghost2_positionY = 0: South (0.0)
+|   |   ghost2_positionY = 1: South (4.0)
+|   |   ghost2_positionY = 2: South (16.0/1.0)
+|   |   ghost2_positionY = 3
+|   |   |   legal_north = 0: South (4.0)
+|   |   |   legal_north = 1: East (8.0/2.0)
+|   |   ghost2_positionY = 4: East (3.0)
+|   |   ghost2_positionY = 5: North (1.0)
+|   |   ghost2_positionY = 6: East (1.0)
+|   |   ghost2_positionY = 7: South (0.0)
+|   legal_west = 1
+|   |   legal_north = 0: East (133.0/37.0)
+|   |   legal_north = 1
+|   |   |   ghost2_positionY = 0: East (0.0)
+|   |   |   ghost2_positionY = 1
+|   |   |   |   ghost4_distance = 0: West (4.0/2.0)
+|   |   |   |   ghost4_distance = 1
+|   |   |   |   |   pacman_positionX = 0: East (0.0)
+|   |   |   |   |   pacman_positionX = 1: East (0.0)
+|   |   |   |   |   pacman_positionX = 2: East (0.0)
+|   |   |   |   |   pacman_positionX = 3: East (0.0)
+|   |   |   |   |   pacman_positionX = 4: East (0.0)
+|   |   |   |   |   pacman_positionX = 5
+|   |   |   |   |   |   ghost4_positionX = 0: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 1: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 2: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 3: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 4: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 5: North (7.0/2.0)
+|   |   |   |   |   |   ghost4_positionX = 6: East (5.0)
+|   |   |   |   |   |   ghost4_positionX = 7: East (0.0)
+|   |   |   |   |   pacman_positionX = 6: North (3.0)
+|   |   |   |   |   pacman_positionX = 7: East (8.0/1.0)
+|   |   |   |   ghost4_distance = 2: East (21.0/3.0)
+|   |   |   |   ghost4_distance = 3: East (22.0/7.0)
+|   |   |   |   ghost4_distance = 4: South (3.0)
+|   |   |   |   ghost4_distance = 5: East (0.0)
+|   |   |   |   ghost4_distance = 6: East (0.0)
+|   |   |   |   ghost4_distance = 7: East (0.0)
+|   |   |   ghost2_positionY = 2: East (8.0/4.0)
+|   |   |   ghost2_positionY = 3: East (26.0/9.0)
+|   |   |   ghost2_positionY = 4: North (8.0/4.0)
+|   |   |   ghost2_positionY = 5: West (4.0/1.0)
+|   |   |   ghost2_positionY = 6: North (1.0)
+|   |   |   ghost2_positionY = 7: East (0.0)
+
+Number of Leaves  : 	63
+
+Size of the tree : 	77
+
+
+Time taken to build model: 0 seconds
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set: 0 seconds
+
+=== Summary ===
+
+Correctly Classified Instances         115               73.2484 %
+Incorrectly Classified Instances        42               26.7516 %
+Kappa statistic                          0.5929
+Mean absolute error                      0.1493
+Root mean squared error                  0.3068
+Relative absolute error                 54.6985 %
+Root relative squared error             82.6456 %
+Total Number of Instances              157     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.235    0.014    0.667      0.235    0.348      0.358    0.671     0.252     West
+                 0.871    0.287    0.709      0.871    0.782      0.583    0.817     0.730     East
+                 0.767    0.031    0.852      0.767    0.807      0.766    0.933     0.789     North
+                 0.675    0.094    0.711      0.675    0.692      0.591    0.798     0.567     South
+                 ?        0.000    ?          ?        ?          ?        ?         ?         Stop
+Weighted Avg.    0.732    0.160    0.732      0.732    0.717      0.596    0.818     0.648     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+  4 11  1  1  0 |  a = West
+  0 61  1  8  0 |  b = East
+  2  3 23  2  0 |  c = North
+  0 11  2 27  0 |  d = South
+  0  0  0  0  0 |  e = Stop
+

@@ -114,6 +114,8 @@ class GameState(object):
         gState = [0,0,0,0]
         d = [0,0,0,0]
         
+        closestGhost = 0
+        
         n = 0
         s = 0
         w = 0
@@ -129,7 +131,32 @@ class GameState(object):
             else:
                 gState[i] = 1
                 d[i] = self.getNoisyGhostDistances()[i]
+                
+                if d[i] < d[closestGhost]:
+                    closestGhost = i
+            if self.getNoisyGhostDistances()[i] == None:
+                d[i] = 0
             i+=1
+            
+        closeX = x[closestGhost+1]
+        closeY = y[closestGhost+1]
+        if closeX < x[0]:
+            dirClX = "West"
+        else:
+            if closeX > x[0]:
+                dirClX = "East"
+            else:
+                dirClX = "Stop"
+
+        if closeY < y[0]:
+            dirClY = "South"
+        else:
+            if closeY > y[0]:
+                dirClY = "North"
+            else:
+                dirClY = "Stop"
+        
+        closestDistance = d[closestGhost]
         
         i = 0
         while (i < len(state.getLegalPacmanActions())):
@@ -149,10 +176,40 @@ class GameState(object):
             
             
         scoreNext += state.getScore()
+
+        distanceFood = state.getDistanceNearestFood()
+        
+        if(distanceFood == None):
+            distanceFood = 0
+            foodX = 0
+            foodY = 0
+        else:
+            foodX = nearestFood[0]
+            foodY = nearestFood[1]
+        
+        
+        if foodX < x[0]:
+            dirFoodX = "West"
+        else:
+            if foodX > x[0]:
+                dirFoodX = "East"
+            else:
+                dirFoodX = "Stop"
+
+        if foodY < y[0]:
+            dirFoodY = "South"
+        else:
+            if foodY > y[0]:
+                dirFoodY = "North"
+            else:
+                dirFoodY = "Stop"
+        
         
         linea = str(x[0]) + "," + str(y[0]) + "," + str(n) + "," + str(s) + "," + str(e) + "," + str(w) + "," + str(gState[0]) + "," + str(gState[1]) + "," + \
                 str(gState[2]) + "," + str(gState[3]) + "," + str(x[1]) + "," + str(y[1]) + "," + str(x[2]) + "," + str(y[2]) + "," + str(x[3]) + "," + str(y[3]) + "," + \
-                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(state.getScore()) + "," + str(scoreNext) + "," + str(action)
+                str(x[4]) + "," + str(y[4]) + "," + str(d[0]) + "," + str(d[1]) + "," + str(d[2]) + "," + str(d[3]) + "," + str(distanceFood) + "," + str(foodX) + "," + \
+                str(foodY) + "," + str(dirFoodX) + "," + str(dirFoodY) + "," + str(state.getScore()) + "," + str(scoreNext) + "," + str(closeX) + "," + str(closeY) + "," + \
+                str(closestDistance) + "," + str(dirClX) + "," + str(dirClY) + "," + str(action)
                 
         path='./'
         
@@ -162,9 +219,12 @@ class GameState(object):
                         "\n\t@ATTRIBUTE ghost1_positionX NUMERIC\n\t@ATTRIBUTE ghost1_positionY NUMERIC\n\t@ATTRIBUTE ghost2_positionX NUMERIC\n\t@ATTRIBUTE ghost2_positionY NUMERIC" \
                         "\n\t@ATTRIBUTE ghost3_positionX NUMERIC\n\t@ATTRIBUTE ghost3_positionY NUMERIC\n\t@ATTRIBUTE ghost4_positionX NUMERIC\n\t@ATTRIBUTE ghost4_positionY NUMERIC" \
                         "\n\t@ATTRIBUTE ghost1_distance NUMERIC\n\t@ATTRIBUTE ghost2_distance NUMERIC\n\t@ATTRIBUTE ghost3_distance NUMERIC\n\t@ATTRIBUTE ghost4_distance NUMERIC" \
-                        "\n\t@ATTRIBUTE food_distance NUMERIC\n\t@ATTRIBUTE food_position_x NUMERIC\n\t@ATTRIBUTE food_position_y NUMERIC\n\t@ATTRIBUTE score NUMERIC" \
-                        "\n\t@ATTRIBUTE score_siguiente NUMERIC\n\t@ATTRIBUTE next_move {West,East,North,South,Stop}\n\n@DATA"
-        print("HELLO!!")
+                        "\n\t@ATTRIBUTE food_distance NUMERIC\n\t@ATTRIBUTE food_position_x NUMERIC\n\t@ATTRIBUTE food_position_y NUMERIC" \
+                        "\n\t@ATTRIBUTE closest_food_dirx {West,East,North,South,Stop}\n\t@ATTRIBUTE closest_food_diry {West,East,North,South,Stop}\n\t@ATTRIBUTE score NUMERIC" \
+                        "\n\t@ATTRIBUTE score_siguiente NUMERIC\n\t@ATTRIBUTE closest_ghost_x NUMERIC\n\t@ATTRIBUTE closest_ghost_y NUMERIC\n\t@ATTRIBUTE closest_ghost_distance NUMERIC" \
+                        "\n\t@ATTRIBUTE closest_ghost_dirx {West,East,North,South,Stop}\n\t@ATTRIBUTE closest_ghost_diry {West,East,North,South,Stop}" \
+                        "\n\t@ATTRIBUTE next_move {West,East,North,South,Stop}\n\n@DATA"
+        
         if not os.path.exists(path+"/log.arff"):
             with open(path+"/log.arff",'w') as le:
                 le.write(new_file_line + '\n\n')
@@ -224,8 +284,9 @@ class GameState(object):
         
         # Book keeping
         state.data._agentMoved = agentIndex
-
-        self.printLineData(action, state.data.scoreChange)
+        
+        if action != "Stop" and agentIndex == 0:
+            self.printLineData(action, state.data.scoreChange)
         state.data.score += state.data.scoreChange
         p = state.getPacmanPosition()
         state.data.ghostDistances = [getNoisyDistance(p, state.getGhostPosition(i)) for i in range(1,state.getNumAgents())]
@@ -330,7 +391,6 @@ class GameState(object):
                         foodPosition = i, j
                         distance = util.manhattanDistance(pacmanPosition, foodPosition)
                         if distance < minDistance:
-                            print("\t" + str(i) + "," + str(j))
                             nearestFood = i, j
                             minDistance = distance
             return minDistance

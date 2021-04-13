@@ -1,0 +1,74 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.OneR -B 6
+Relation:     pacman-data-training-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>2, ifelse(A>5, ifelse(A>8, ifelse(A>12, ifelse(A>15, ifelse(A>18, 7, 6), 5), 4), 3), 2), 1), 0)-V-R1-2,11-18,24-25-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>5, ifelse(A>10, ifelse(A>15, ifelse(A>20, ifelse(A>25, ifelse(A>30, 7, 6), 5), 4), 3), 2), 1), 0)-V-R19-23,32-weka.filters.unsupervised.attribute.NumericToNominal-R1-2,11-25,32-weka.filters.unsupervised.attribute.Remove-R7-10,26-34
+Instances:    370
+Attributes:   22
+              pacman_positionX
+              pacman_positionY
+              legal_north
+              legal_south
+              legal_east
+              legal_west
+              ghost1_positionX
+              ghost1_positionY
+              ghost2_positionX
+              ghost2_positionY
+              ghost3_positionX
+              ghost3_positionY
+              ghost4_positionX
+              ghost4_positionY
+              ghost1_distance
+              ghost2_distance
+              ghost3_distance
+              ghost4_distance
+              food_distance
+              food_position_x
+              food_position_y
+              next_move
+Test mode:    user supplied test set:  size unknown (reading incrementally)
+
+=== Classifier model (full training set) ===
+
+legal_west:
+	0	-> South
+	1	-> East
+(219/370 instances correct)
+
+
+Time taken to build model: 0 seconds
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set: 0 seconds
+
+=== Summary ===
+
+Correctly Classified Instances          51               35.9155 %
+Incorrectly Classified Instances        91               64.0845 %
+Kappa statistic                          0.1016
+Mean absolute error                      0.2563
+Root mean squared error                  0.5063
+Relative absolute error                 87.2896 %
+Root relative squared error            127.1225 %
+Total Number of Instances              142     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.000    0.000    ?          0.000    ?          ?        0.500     0.204     West
+                 0.951    0.812    0.322      0.951    0.481      0.178    0.570     0.321     East
+                 0.000    0.000    ?          0.000    ?          ?        0.500     0.232     North
+                 0.308    0.087    0.571      0.308    0.400      0.277    0.610     0.366     South
+                 ?        0.000    ?          ?        ?          ?        ?         ?         Stop
+Weighted Avg.    0.359    0.258    ?          0.359    ?          ?        0.550     0.289     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+  0 29  0  0  0 |  a = West
+  0 39  0  2  0 |  b = East
+  0 26  0  7  0 |  c = North
+  0 27  0 12  0 |  d = South
+  0  0  0  0  0 |  e = Stop
+

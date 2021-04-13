@@ -1,0 +1,277 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     pacman-data-training-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>2, ifelse(A>5, ifelse(A>8, ifelse(A>12, ifelse(A>15, ifelse(A>18, 7, 6), 5), 4), 3), 2), 1), 0)-V-R1-2,11-18,24-25-weka.filters.unsupervised.attribute.MathExpression-Eifelse(A>0, ifelse(A>5, ifelse(A>10, ifelse(A>15, ifelse(A>20, ifelse(A>25, ifelse(A>30, 7, 6), 5), 4), 3), 2), 1), 0)-V-R19-23,32-weka.filters.unsupervised.attribute.NumericToNominal-R1-2,11-25,32-weka.filters.unsupervised.attribute.Remove-R7-10,26-34
+Instances:    339
+Attributes:   22
+              pacman_positionX
+              pacman_positionY
+              legal_north
+              legal_south
+              legal_east
+              legal_west
+              ghost1_positionX
+              ghost1_positionY
+              ghost2_positionX
+              ghost2_positionY
+              ghost3_positionX
+              ghost3_positionY
+              ghost4_positionX
+              ghost4_positionY
+              ghost1_distance
+              ghost2_distance
+              ghost3_distance
+              ghost4_distance
+              food_distance
+              food_position_x
+              food_position_y
+              next_move
+Test mode:    user supplied test set:  size unknown (reading incrementally)
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+legal_north = 0
+|   ghost2_positionY = 0: East (0.0)
+|   ghost2_positionY = 1
+|   |   ghost1_positionX = 0: East (0.0)
+|   |   ghost1_positionX = 1: East (33.0/7.0)
+|   |   ghost1_positionX = 2
+|   |   |   pacman_positionY = 0: West (0.0)
+|   |   |   pacman_positionY = 1: West (0.0)
+|   |   |   pacman_positionY = 2: West (6.0)
+|   |   |   pacman_positionY = 3
+|   |   |   |   legal_south = 0: West (3.0/1.0)
+|   |   |   |   legal_south = 1: South (3.0/1.0)
+|   |   |   pacman_positionY = 4: West (0.0)
+|   |   |   pacman_positionY = 5: West (0.0)
+|   |   |   pacman_positionY = 6: West (0.0)
+|   |   |   pacman_positionY = 7: West (0.0)
+|   |   ghost1_positionX = 3: East (4.0/1.0)
+|   |   ghost1_positionX = 4: East (0.0)
+|   |   ghost1_positionX = 5: South (3.0/1.0)
+|   |   ghost1_positionX = 6: West (1.0)
+|   |   ghost1_positionX = 7: East (0.0)
+|   ghost2_positionY = 2
+|   |   pacman_positionY = 0: West (0.0)
+|   |   pacman_positionY = 1: West (0.0)
+|   |   pacman_positionY = 2: West (3.0)
+|   |   pacman_positionY = 3: East (1.0)
+|   |   pacman_positionY = 4: West (0.0)
+|   |   pacman_positionY = 5: West (0.0)
+|   |   pacman_positionY = 6: South (3.0)
+|   |   pacman_positionY = 7: West (0.0)
+|   ghost2_positionY = 3: East (25.0/4.0)
+|   ghost2_positionY = 4: East (6.0)
+|   ghost2_positionY = 5
+|   |   ghost3_positionX = 0: East (0.0)
+|   |   ghost3_positionX = 1: East (0.0)
+|   |   ghost3_positionX = 2: East (0.0)
+|   |   ghost3_positionX = 3: East (0.0)
+|   |   ghost3_positionX = 4: East (0.0)
+|   |   ghost3_positionX = 5: East (3.0)
+|   |   ghost3_positionX = 6: West (2.0)
+|   |   ghost3_positionX = 7: East (0.0)
+|   ghost2_positionY = 6
+|   |   ghost3_distance = 0: East (0.0)
+|   |   ghost3_distance = 1: West (2.0)
+|   |   ghost3_distance = 2
+|   |   |   ghost2_distance = 0: East (0.0)
+|   |   |   ghost2_distance = 1: West (1.0)
+|   |   |   ghost2_distance = 2: East (4.0)
+|   |   |   ghost2_distance = 3
+|   |   |   |   ghost1_distance = 0: West (0.0)
+|   |   |   |   ghost1_distance = 1: West (0.0)
+|   |   |   |   ghost1_distance = 2: West (3.0)
+|   |   |   |   ghost1_distance = 3: East (3.0/1.0)
+|   |   |   |   ghost1_distance = 4: West (0.0)
+|   |   |   |   ghost1_distance = 5: West (0.0)
+|   |   |   |   ghost1_distance = 6: West (0.0)
+|   |   |   |   ghost1_distance = 7: West (0.0)
+|   |   |   ghost2_distance = 4: East (0.0)
+|   |   |   ghost2_distance = 5: East (0.0)
+|   |   |   ghost2_distance = 6: East (0.0)
+|   |   |   ghost2_distance = 7: East (0.0)
+|   |   ghost3_distance = 3: East (7.0)
+|   |   ghost3_distance = 4: East (0.0)
+|   |   ghost3_distance = 5: East (0.0)
+|   |   ghost3_distance = 6: East (0.0)
+|   |   ghost3_distance = 7: East (0.0)
+|   ghost2_positionY = 7: West (3.0)
+legal_north = 1
+|   ghost2_positionY = 0: North (0.0)
+|   ghost2_positionY = 1
+|   |   ghost1_positionY = 0: North (0.0)
+|   |   ghost1_positionY = 1
+|   |   |   ghost4_distance = 0
+|   |   |   |   pacman_positionY = 0: South (0.0)
+|   |   |   |   pacman_positionY = 1: South (0.0)
+|   |   |   |   pacman_positionY = 2: West (3.0/1.0)
+|   |   |   |   pacman_positionY = 3: South (3.0)
+|   |   |   |   pacman_positionY = 4: South (0.0)
+|   |   |   |   pacman_positionY = 5: South (0.0)
+|   |   |   |   pacman_positionY = 6: South (0.0)
+|   |   |   |   pacman_positionY = 7: South (0.0)
+|   |   |   ghost4_distance = 1
+|   |   |   |   pacman_positionY = 0: East (0.0)
+|   |   |   |   pacman_positionY = 1: East (0.0)
+|   |   |   |   pacman_positionY = 2
+|   |   |   |   |   legal_east = 0: North (4.0/1.0)
+|   |   |   |   |   legal_east = 1
+|   |   |   |   |   |   ghost4_positionX = 0: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 1: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 2: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 3: North (2.0)
+|   |   |   |   |   |   ghost4_positionX = 4: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 5: East (0.0)
+|   |   |   |   |   |   ghost4_positionX = 6: East (9.0/2.0)
+|   |   |   |   |   |   ghost4_positionX = 7: East (0.0)
+|   |   |   |   pacman_positionY = 3: East (4.0/2.0)
+|   |   |   |   pacman_positionY = 4: North (7.0/3.0)
+|   |   |   |   pacman_positionY = 5
+|   |   |   |   |   ghost4_positionY = 0: West (0.0)
+|   |   |   |   |   ghost4_positionY = 1: West (0.0)
+|   |   |   |   |   ghost4_positionY = 2: West (0.0)
+|   |   |   |   |   ghost4_positionY = 3: West (0.0)
+|   |   |   |   |   ghost4_positionY = 4: West (0.0)
+|   |   |   |   |   ghost4_positionY = 5: West (4.0/1.0)
+|   |   |   |   |   ghost4_positionY = 6: North (2.0)
+|   |   |   |   |   ghost4_positionY = 7: West (0.0)
+|   |   |   |   pacman_positionY = 6: East (2.0)
+|   |   |   |   pacman_positionY = 7: East (0.0)
+|   |   |   ghost4_distance = 2
+|   |   |   |   ghost3_positionY = 0: East (0.0)
+|   |   |   |   ghost3_positionY = 1: East (9.0/4.0)
+|   |   |   |   ghost3_positionY = 2: East (4.0)
+|   |   |   |   ghost3_positionY = 3: East (0.0)
+|   |   |   |   ghost3_positionY = 4: North (5.0)
+|   |   |   |   ghost3_positionY = 5: East (0.0)
+|   |   |   |   ghost3_positionY = 6: East (0.0)
+|   |   |   |   ghost3_positionY = 7: East (0.0)
+|   |   |   ghost4_distance = 3
+|   |   |   |   ghost3_distance = 0: South (2.0)
+|   |   |   |   ghost3_distance = 1: South (2.0)
+|   |   |   |   ghost3_distance = 2: East (12.0/5.0)
+|   |   |   |   ghost3_distance = 3: East (0.0)
+|   |   |   |   ghost3_distance = 4: East (0.0)
+|   |   |   |   ghost3_distance = 5: East (0.0)
+|   |   |   |   ghost3_distance = 6: East (0.0)
+|   |   |   |   ghost3_distance = 7: East (0.0)
+|   |   |   ghost4_distance = 4
+|   |   |   |   pacman_positionX = 0: South (0.0)
+|   |   |   |   pacman_positionX = 1: South (0.0)
+|   |   |   |   pacman_positionX = 2: East (2.0)
+|   |   |   |   pacman_positionX = 3: North (2.0)
+|   |   |   |   pacman_positionX = 4: South (3.0/1.0)
+|   |   |   |   pacman_positionX = 5
+|   |   |   |   |   pacman_positionY = 0: South (0.0)
+|   |   |   |   |   pacman_positionY = 1: South (0.0)
+|   |   |   |   |   pacman_positionY = 2: East (2.0/1.0)
+|   |   |   |   |   pacman_positionY = 3: South (4.0/1.0)
+|   |   |   |   |   pacman_positionY = 4: South (0.0)
+|   |   |   |   |   pacman_positionY = 5: South (0.0)
+|   |   |   |   |   pacman_positionY = 6: South (0.0)
+|   |   |   |   |   pacman_positionY = 7: South (0.0)
+|   |   |   |   pacman_positionX = 6: South (0.0)
+|   |   |   |   pacman_positionX = 7: South (0.0)
+|   |   |   ghost4_distance = 5: North (5.0/1.0)
+|   |   |   ghost4_distance = 6: North (0.0)
+|   |   |   ghost4_distance = 7: North (0.0)
+|   |   ghost1_positionY = 2
+|   |   |   legal_east = 0: South (2.0)
+|   |   |   legal_east = 1: West (6.0/1.0)
+|   |   ghost1_positionY = 3
+|   |   |   legal_west = 0: East (2.0/1.0)
+|   |   |   legal_west = 1: North (2.0)
+|   |   ghost1_positionY = 4: North (2.0)
+|   |   ghost1_positionY = 5
+|   |   |   legal_south = 0: West (2.0/1.0)
+|   |   |   legal_south = 1: South (5.0/1.0)
+|   |   ghost1_positionY = 6: North (0.0)
+|   |   ghost1_positionY = 7: North (0.0)
+|   ghost2_positionY = 2
+|   |   legal_west = 0: South (35.0/1.0)
+|   |   legal_west = 1
+|   |   |   ghost1_positionY = 0: West (0.0)
+|   |   |   ghost1_positionY = 1: South (5.0/2.0)
+|   |   |   ghost1_positionY = 2: West (9.0/4.0)
+|   |   |   ghost1_positionY = 3: South (1.0)
+|   |   |   ghost1_positionY = 4: West (0.0)
+|   |   |   ghost1_positionY = 5: West (0.0)
+|   |   |   ghost1_positionY = 6: West (0.0)
+|   |   |   ghost1_positionY = 7: West (0.0)
+|   ghost2_positionY = 3
+|   |   legal_south = 0: West (2.0/1.0)
+|   |   legal_south = 1
+|   |   |   ghost1_distance = 0: South (3.0/1.0)
+|   |   |   ghost1_distance = 1: North (7.0/3.0)
+|   |   |   ghost1_distance = 2: East (2.0)
+|   |   |   ghost1_distance = 3: South (3.0/1.0)
+|   |   |   ghost1_distance = 4: South (2.0)
+|   |   |   ghost1_distance = 5: South (0.0)
+|   |   |   ghost1_distance = 6: South (0.0)
+|   |   |   ghost1_distance = 7: South (0.0)
+|   ghost2_positionY = 4
+|   |   ghost2_positionX = 0: South (0.0)
+|   |   ghost2_positionX = 1: South (0.0)
+|   |   ghost2_positionX = 2: South (0.0)
+|   |   ghost2_positionX = 3: South (3.0)
+|   |   ghost2_positionX = 4
+|   |   |   ghost1_positionX = 0: North (0.0)
+|   |   |   ghost1_positionX = 1: South (2.0)
+|   |   |   ghost1_positionX = 2: North (2.0)
+|   |   |   ghost1_positionX = 3: North (0.0)
+|   |   |   ghost1_positionX = 4: North (0.0)
+|   |   |   ghost1_positionX = 5: North (0.0)
+|   |   |   ghost1_positionX = 6: North (0.0)
+|   |   |   ghost1_positionX = 7: North (0.0)
+|   |   ghost2_positionX = 5: South (0.0)
+|   |   ghost2_positionX = 6: South (0.0)
+|   |   ghost2_positionX = 7: South (0.0)
+|   ghost2_positionY = 5: North (3.0)
+|   ghost2_positionY = 6: North (23.0/1.0)
+|   ghost2_positionY = 7: North (5.0)
+
+Number of Leaves  : 	170
+
+Size of the tree : 	201
+
+
+Time taken to build model: 0 seconds
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set: 0 seconds
+
+=== Summary ===
+
+Correctly Classified Instances          43               30.2817 %
+Incorrectly Classified Instances        99               69.7183 %
+Kappa statistic                          0.0536
+Mean absolute error                      0.2695
+Root mean squared error                  0.48  
+Relative absolute error                 90.8915 %
+Root relative squared error            123.6554 %
+Total Number of Instances              142     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.000    0.080    0.000      0.000    0.000      -0.132   0.506     0.223     West
+                 0.390    0.287    0.356      0.390    0.372      0.100    0.556     0.388     East
+                 0.212    0.284    0.184      0.212    0.197      -0.069   0.649     0.300     North
+                 0.513    0.291    0.400      0.513    0.449      0.207    0.550     0.320     South
+                 ?        0.000    ?          ?        ?          ?        ?         ?         Stop
+Weighted Avg.    0.303    0.245    0.255      0.303    0.277      0.043    0.566     0.315     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+  0 13  9  7  0 |  a = West
+  8 16 10  7  0 |  b = East
+  1  9  7 16  0 |  c = North
+  0  7 12 20  0 |  d = South
+  0  0  0  0  0 |  e = Stop
+

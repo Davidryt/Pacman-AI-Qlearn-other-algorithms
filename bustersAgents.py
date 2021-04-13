@@ -13,7 +13,6 @@ from __future__ import print_function
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
 from builtins import range
 from builtins import object
 import util
@@ -25,7 +24,6 @@ import busters
 import os
 
 from wekaI import Weka
-
 
 
 class NullGraphics(object):
@@ -112,6 +110,8 @@ class BustersAgent(object):
 
     def chooseAction(self, gameState):
         "By default, a BustersAgent just stops.  This should be overridden."
+        x = [1.51299,14.4,1.74,'None',74.55,0,7.59,0,0]
+        a = self.weka.predict("./Classifiers/j48-t1.model", x, "./Datos/training_tutorial1-classif.arff")
         return Directions.STOP
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
@@ -168,43 +168,6 @@ class RandomPAgent(BustersAgent):
         if   ( move_random == 2 ) and Directions.NORTH in legal:   move = Directions.NORTH
         if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
         return move
-
-        def chooseActionWeka(self, gameState):
-            state = gameState(self)
-            x = [0, 0, 0, 0, 0]
-            y = [0, 0, 0, 0, 0]
-            x[0], y[0] = state.getPacmanPosition()
-            gState = [0, 0, 0, 0]
-            d = [0, 0, 0, 0]
-            n = 0
-            s = 0
-            w = 0
-            e = 0
-            i = 0
-            while (i < 4):
-                x[i + 1], y[i + 1] = state.getGhostPositions()[i]
-                if not state.getLivingGhosts()[i + 1]:
-                    gState[i] = 0
-                    d[i] = 0
-                else:
-                    gState[i] = 1
-                    d[i] = self.getNoisyGhostDistances()[i]
-                i += 1
-            i = 0
-            while (i < len(state.getLegalPacmanActions())):
-                if (state.getLegalPacmanActions()[i] == "North"):
-                    n = 1
-                if (state.getLegalPacmanActions()[i] == "South"):
-                    s = 1
-                if (state.getLegalPacmanActions()[i] == "East"):
-                    e = 1
-                if (state.getLegalPacmanActions()[i] == "West"):
-                    w = 1
-                i += 1
-
-            linea = [x[0],y[0],n,s,e,w,gState[0],gState[1],gState[2],gState[3],x[1],y[1],x[2],y[2],x[3],y[3],x[4],y[4],d[0],d[3]]
-            a = self.weka.predict("./j48.model", linea , "./training_set.arff")
-            return move
         
 class GreedyBustersAgent(BustersAgent):
     "An agent that charges the closest ghost."
@@ -400,11 +363,12 @@ class BasicAgentAA(BustersAgent):
         move = Directions.STOP #Default move: stop
         legal = gameState.getLegalActions(0) ##List of Legal positions from the pacman
         dist=999999 #initial dist infinite
-        i=0
+        i=1
         for x in gameState.data.ghostDistances:
             if isinstance(x,int):
                 if x < dist:
                     dist = x		#this calculates the nearest ghost
+            i=+1
         pos= gameState.data.ghostDistances.index(dist)  #position of nearest ghost
         pacpos= gameState.getPacmanPosition()         #pacman position
         coord=gameState.getGhostPositions()[pos]	#coordinates of nearest ghost
@@ -429,12 +393,12 @@ class BasicAgentAA(BustersAgent):
         return move
 
     def printLineData(self, gameState):
-        linea = "Pacman position: "+ str(gameState.getPacmanPosition())+" Legal actions: "+ str(gameState.getLegalPacmanActions())+ "  Living ghosts: "+ str(gameState.getLivingGhosts()) + "  Ghosts positions: "+ str(gameState.getGhostPositions()) + "  Ghosts distances: "+ str(gameState.data.ghostDistances) +""
+        linea = str(gameState.getPacmanPosition())+","+ str(gameState.getLegalPacmanActions())+ ","+ str(gameState.getLivingGhosts()) + ","+ str(gameState.getGhostPositions()) + ","+ str(gameState.data.ghostDistances)
         path='./'
-        if not os.path.exists(path+"/log.txt"):
-            with open(path+"/log.txt",'w') as le:
-                le.write(linea+'\n')
+        if not os.path.exists(path+"/log.arff"):
+            with open(path+"/log.arff",'w') as le:
+                le.write('%1. Title: log \n% \n%2. Sources: \n%   (a) Creator: A\n%   (b) Donor: M\n% (c) Date: Daaate\n%\n@Relation pacman\n\n@atribute Position'+' STRING\n@atribute LegalActions STRING\n@atribute GhostsAlive STRING\n@atribute GhostPosition STRING\n@atribute GhostDistances STRING\n@data'+linea+'\n')
         else:
-            with open(path+"/log.txt",'a') as le:
+            with open(path+"/log.arff",'a') as le:
                 le.write(linea+'\n')
         return linea
