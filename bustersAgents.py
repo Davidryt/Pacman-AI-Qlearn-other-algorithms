@@ -19,11 +19,284 @@ import util
 from game import Agent
 from game import Directions
 from keyboardAgents import KeyboardAgent
+from learningAgents import ReinforcementAgent
 import inference
 import busters as otro
 import os
 
 from wekaI import Weka
+
+class QLearningAgent(BustersAgent):
+    
+    def intialization(self, gameState):
+        BustersAgent.registerInitialState(self, gameState)
+        self.actions = {"north":0, "east":1, "south":2, "west":3} 
+        if os.path.exists("qtable.txt"):
+            self.table_file = open("qtable.txt", "r+")
+            self.q_table = self.readQtable()
+        else:
+            self.table_file = open("qtable.txt", "w+")
+            self.initQtable(20) #Temporal number, will depend on our args chosen
+        
+        self.epsilon = 0.5
+        self.alpha = 0.5
+        self.discount = 0.5	
+    
+    def initQtable(self,rows):
+    	colums = len(self.actions)
+    	temp = np.zeros(rows,columns)
+    	self.q_table = temp
+
+
+    def readQtable(self):
+        "Read qtable from disc"
+        table = self.table_file.readlines()
+        q_table = []
+
+        for i, line in enumerate(table):
+            row = line.split()
+            row = [float(x) for x in row]
+            q_table.append(row)
+
+        return q_table
+
+    def writeQtable(self):
+        "Write qtable to disc"
+        self.table_file.seek(0)
+        self.table_file.truncate()
+        for line in self.q_table:
+            for item in line:
+                self.table_file.write(str(item)+" ")
+            self.table_file.write("\n")
+
+#         self.table_file_csv.seek(0)
+#         self.table_file_csv.truncate()
+#         for line in self.q_table:
+#             for item in line[:-1]:
+#                 self.table_file_csv.write(str(item)+", ")
+#             self.table_file_csv.write(str(line[-1]))                
+#             self.table_file_csv.write("\n")
+
+            
+    def printQtable(self):
+        "Print qtable"
+        for line in self.q_table:
+            print(line)
+        print("\n")    
+            
+    def __del__(self):
+        "Destructor. Invokation at the end of each episode"
+        self.writeQtable()
+        self.table_file.close()
+
+    def computePosition(self, state):
+        """
+        Compute the row of the qtable for a given state.
+        
+        """
+        if state.nearestdirection == 'Stop':
+            return 9
+
+        row = {'North':0, 'East':2, 'South':4, 'West':6}[state.nearestdirection]
+        row += state.food
+        return row
+
+
+    def getQValue(self, state, action):
+
+        """
+          Returns Q(state,action)
+          Should return 0.0 if we have never seen a state
+          or the Q node value otherwise
+        """
+        position = self.computePosition(state)
+        action_column = self.actions[action]
+        return self.q_table[position][action_column]
+
+
+    def computeValueFromQValues(self, state):
+        """
+          Returns max_action Q(state,action)
+          where the max is over legal actions.  Note that if
+          there are no legal actions, which is the case at the
+          terminal state, you should return a value of 0.0.
+        """
+        legalActions = state.getLegalActionsRemaining(state)
+        if len(legalActions)==0:
+          return 0
+        return max(self.q_table[self.computePosition(state)])
+
+    def computeActionFromQValues(self, state):
+        """
+          Compute the best action to take in a state.  Note that if there
+          are no legal actions, which is the case at the terminal state,
+          you should return None.
+        """
+        legalActions = state.getLegalActionsRemaining(state)
+        if len(legalActions)==0:
+          return None
+
+        best_actions = [legalActions[0]]
+        best_value = self.getQValue(state, legalActions[0])
+        for action in legalActions:
+            value = self.getQValue(state, action)
+            if value == best_value:
+                best_actions.append(action)
+            if value > best_value:
+                best_actions = [action]
+                best_value = value
+
+        return random.choice(best_actions)
+
+    def getAction(self, state):
+        """
+          Compute the action to take in the current state.  With
+          probability self.epsilon, we should take a random action and
+          take the best policy action otherwise.  Note that if there are
+          no legal actions, which is the case at the terminal state, you
+          should choose None as the action.
+        """
+
+        # Pick Action
+        qstate= IterationState(state)
+        legalActions = state.getLegalActionsRemaining()
+        action = None
+
+        if len(legalActions) == 0:
+             return action
+
+        flip = util.flipCoin(self.epsilon)
+
+        if flip:
+            return random.choice(legalActions)
+        return self.getPolicy(qstate)
+
+
+    def update(self, state, action, nextState, reward):
+        """
+        The parent class calls this to observe a
+        state = action => nextState and reward transition.
+        You should do your Q-Value update here
+
+        Good Terminal state -> reward 1
+        Bad Terminal state -> reward -1
+        Otherwise -> reward 0
+
+        Q-Learning update:
+
+        if terminal_state:
+        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + 0)
+        else:
+        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
+
+        """
+        action = self.computeActionFromQValues(nextState)
+        if bestAction == None:
+                return
+        
+        position = self.computePosition(state)
+        action_column = self.actions[action]
+        qvalue = (1 - self.alpha) * self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
+		
+        self.q_table[position][action_column] = qvalue
+
+
+    def getPolicy(self, state):
+        "Return the best action in the qtable for a given state"
+        return self.computeActionFromQValues(state)
+
+    def getValue(self, state):
+        "Return the highest q value for a given state"
+        return self.computeValueFromQValues(state)
+       
+    def getReward(self, state, action, nextstate, gameState, nextGameState):
+    	return 0
+
+
+class IterationState ():
+
+    def __init__(self, gameState):
+        self.nearestdirection = self.getDir(gameState)
+        self.__legal_actions = gameState.getLegalActions()
+        self.food = self.isFood(gameState)
+        
+    def isFood(gameState):
+    	if gameState.getNumFood()!=0 :
+    	    return 1
+    	else:
+    	    return 0
+    
+    def getDir(gameState):
+    	
+        [x,y] = gameState.getPacmanPosition()
+        available_actions = self.__legal_actions.copy()
+        pacmanDirection = gameState.data.agentStates[0].getDirection()
+
+
+        if len(available_actions) > 2:
+            if pacmanDirection == "North":
+                available_actions.remove("South")
+            elif pacmanDirection == "South":
+                available_actions.remove("North")
+            if pacmanDirection == "East":
+                available_actions.remove("West")
+            elif pacmanDirection == "West":
+                available_actions.remove("East")
+                
+        #stop as an action????? REVIEW
+
+        available_actions.remove("Stop")
+
+            
+        move = "Stop" 
+        
+ 
+        
+        i = 0
+        closestGhost = 0
+        d = [0,0,0,0]
+        while (i < 4):
+            if not gameState.getLivingGhosts()[i+1]:
+                d[i] = 9999
+            else:
+                d[i] = gameState.getNoisyGhostDistances()[i]
+                if d[i] < d[closestGhost]:
+                    closestGhost = i
+            if gameState.getNoisyGhostDistances()[i] == None:
+                d[i] = 9999
+            i+=1
+            
+        GhostDistance=d[closestGhost]
+        FoodDistance = gameState.getDistanceNearestFood()
+		
+        if FoodDistance < GhostDistance and FoodDistance != 0:
+			
+			#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL
+            move="Stop"
+		
+        elif GhostDistance <= FoodDistance and GhostDistance != 0:
+            ghostPosition = gameState.getGhostPositions()[closestGhost]
+            if len(available_actions) > 1: 
+                if y < ghostPosition[1] and "North" in legal:
+                    move = "North"
+                elif y > ghostPosition[1] and "South" in legal:
+                    move = "South"
+                if x < ghostPosition[0] and "East" in legal:
+                    move = "East"
+                if x > ghostPosition[0] and "West" in legal:
+                    move = "West"
+                elif move == "Stop" and pacmanDirection in legal:
+                    move = pacmanDirection
+
+            else: 
+                move = available_actions[0]
+		        
+
+        return move
+		
+    def getLegalActionsRemaining(self):
+        return self.__legal_actions
+
 
 class NullGraphics(object):
     "Placeholder for graphics"
