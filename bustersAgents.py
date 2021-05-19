@@ -23,14 +23,57 @@ from learningAgents import ReinforcementAgent
 import inference
 import busters as otro
 import os
+import numpy as np
 
 from wekaI import Weka
 
+class BustersAgent(object):
+    "An agent that tracks and displays its beliefs about ghost positions."
+
+    def __init__( self, index = 0, inference = "ExactInference", ghostAgents = None, observeEnable = True, elapseTimeEnable = True):
+        inferenceType = util.lookup(inference, globals())
+        self.inferenceModules = [inferenceType(a) for a in ghostAgents]
+        self.observeEnable = observeEnable
+
+
+    def registerInitialState(self, gameState):
+        "Initializes beliefs and inference modules"
+        import __main__
+        self.display = __main__._display
+        for inference in self.inferenceModules:
+            inference.initialize(gameState)
+        self.ghostBeliefs = [inf.getBeliefDistribution() for inf in self.inferenceModules]
+        self.firstMove = True
+
+    def observationFunction(self, gameState):
+        "Removes the ghost states from the gameState"
+        agents = gameState.data.agentStates
+        gameState.data.agentStates = [agents[0]] + [None for i in range(1, len(agents))]
+        return gameState
+
+    def getAction(self, gameState):
+        "Updates beliefs, then chooses an action based on updated beliefs."
+        #for index, inf in enumerate(self.inferenceModules):
+        #    if not self.firstMove and self.elapseTimeEnable:
+        #        inf.elapseTime(gameState)
+        #    self.firstMove = False
+        #    if self.observeEnable:
+        #        inf.observeState(gameState)
+        #    self.ghostBeliefs[index] = inf.getBeliefDistribution()
+        #self.display.updateDistributions(self.ghostBeliefs)
+        return self.chooseAction(gameState)
+
+    def chooseAction(self, gameState):
+ 
+        a = "Stop" 
+        return a
+
+
 class QLearningAgent(BustersAgent):
     
-    def intialization(self, gameState):
+    def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
-        self.actions = {"north":0, "east":1, "south":2, "west":3} 
+        self.actions = {"North":0, "East":1, "South":2, "West":3} 
         if os.path.exists("qtable.txt"):
             self.table_file = open("qtable.txt", "r+")
             self.q_table = self.readQtable()
@@ -43,9 +86,7 @@ class QLearningAgent(BustersAgent):
         self.discount = 0.5	
     
     def initQtable(self,rows):
-    	colums = len(self.actions)
-    	temp = np.zeros(rows,columns)
-    	self.q_table = temp
+    	self.q_table = np.zeros((rows,len(self.actions)))
 
 
     def readQtable(self):
@@ -57,6 +98,7 @@ class QLearningAgent(BustersAgent):
             row = line.split()
             row = [float(x) for x in row]
             q_table.append(row)
+            
 
         return q_table
 
@@ -111,6 +153,9 @@ class QLearningAgent(BustersAgent):
         """
         position = self.computePosition(state)
         action_column = self.actions[action]
+        print(action_column)
+        print(position)
+        print(self.q_table)
         return self.q_table[position][action_column]
 
 
@@ -121,7 +166,7 @@ class QLearningAgent(BustersAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return a value of 0.0.
         """
-        legalActions = state.getLegalActionsRemaining(state)
+        legalActions = state.getLegalActionsRemaining()
         if len(legalActions)==0:
           return 0
         return max(self.q_table[self.computePosition(state)])
@@ -132,11 +177,13 @@ class QLearningAgent(BustersAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        legalActions = state.getLegalActionsRemaining(state)
+        legalActions = state.getLegalActionsRemaining()
         if len(legalActions)==0:
           return None
 
         best_actions = [legalActions[0]]
+        if 'Stop' in legalActions: 
+        	legalActions.remove("Stop")
         best_value = self.getQValue(state, legalActions[0])
         for action in legalActions:
             value = self.getQValue(state, action)
@@ -159,7 +206,7 @@ class QLearningAgent(BustersAgent):
 
         # Pick Action
         qstate= IterationState(state)
-        legalActions = state.getLegalActionsRemaining()
+        legalActions = qstate.getLegalActionsRemaining()
         action = None
 
         if len(legalActions) == 0:
@@ -173,23 +220,7 @@ class QLearningAgent(BustersAgent):
 
 
     def update(self, state, action, nextState, reward):
-        """
-        The parent class calls this to observe a
-        state = action => nextState and reward transition.
-        You should do your Q-Value update here
-
-        Good Terminal state -> reward 1
-        Bad Terminal state -> reward -1
-        Otherwise -> reward 0
-
-        Q-Learning update:
-
-        if terminal_state:
-        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + 0)
-        else:
-        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
-
-        """
+        
         action = self.computeActionFromQValues(nextState)
         if bestAction == None:
                 return
@@ -199,6 +230,8 @@ class QLearningAgent(BustersAgent):
         qvalue = (1 - self.alpha) * self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 		
         self.q_table[position][action_column] = qvalue
+        self.writeQtable()
+        
 
 
     def getPolicy(self, state):
@@ -210,26 +243,54 @@ class QLearningAgent(BustersAgent):
         return self.computeValueFromQValues(state)
        
     def getReward(self, state, action, nextstate, gameState, nextGameState):
-    	return 0
+        reward = 0
+        if(self.getdisnear(gameState)<self.getdisnear(nextGameState)):
 
+            reward += 15
+    	
+        if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
+            reward += 150
+        if nextGameState.getNumFood() < gameState.getNumFood():
+            reward += 75
+            
+        return reward
+
+    def getdistnear(self, gameState):
+        i = 0
+        closestGhost = 0
+        d = [0,0,0,0]
+        vivos = len(gameState.getLivingGhosts())-1
+        while (i < vivos ):
+            if not gameState.getLivingGhosts()[i+1]:
+                d[i] = 9999
+            else:
+                d[i] = gameState.getNoisyGhostDistances()[i]
+                if d[i] < d[closestGhost]:
+                    closestGhost = i
+            if gameState.getNoisyGhostDistances()[i] == None:
+                d[i] = 9999
+            i+=1
+            
+        GhostDistance=d[closestGhost]
+        return GhostDistance
 
 class IterationState ():
 
     def __init__(self, gameState):
         self.nearestdirection = self.getDir(gameState)
-        self.__legal_actions = gameState.getLegalActions()
+        self.legal_actions = gameState.getLegalActions()
         self.food = self.isFood(gameState)
         
-    def isFood(gameState):
+    def isFood(self, gameState):
     	if gameState.getNumFood()!=0 :
     	    return 1
     	else:
     	    return 0
     
-    def getDir(gameState):
+    def getDir(self, gameState):
     	
         [x,y] = gameState.getPacmanPosition()
-        available_actions = self.__legal_actions.copy()
+        available_actions = gameState.getLegalActions().copy()
         pacmanDirection = gameState.data.agentStates[0].getDirection()
 
 
@@ -255,7 +316,8 @@ class IterationState ():
         i = 0
         closestGhost = 0
         d = [0,0,0,0]
-        while (i < 4):
+        vivos = len(gameState.getLivingGhosts())-1
+        while (i < vivos ):
             if not gameState.getLivingGhosts()[i+1]:
                 d[i] = 9999
             else:
@@ -268,6 +330,8 @@ class IterationState ():
             
         GhostDistance=d[closestGhost]
         FoodDistance = gameState.getDistanceNearestFood()
+        if FoodDistance == None :
+        	FoodDistance = 0
 		
         if FoodDistance < GhostDistance and FoodDistance != 0:
 			
@@ -295,7 +359,7 @@ class IterationState ():
         return move
 		
     def getLegalActionsRemaining(self):
-        return self.__legal_actions
+        return self.legal_actions
 
 
 class NullGraphics(object):
@@ -342,53 +406,7 @@ class KeyboardInference(inference.InferenceModule):
         return self.beliefs
 
 
-class BustersAgent(object):
-    "An agent that tracks and displays its beliefs about ghost positions."
 
-    def __init__( self, index = 0, inference = "ExactInference", ghostAgents = None, observeEnable = True, elapseTimeEnable = True):
-        inferenceType = util.lookup(inference, globals())
-        self.inferenceModules = [inferenceType(a) for a in ghostAgents]
-        self.observeEnable = observeEnable
-        self.elapseTimeEnable = elapseTimeEnable
-        self.weka = Weka()
-        self.weka.start_jvm()
-
-    def registerInitialState(self, gameState):
-        "Initializes beliefs and inference modules"
-        import __main__
-        self.display = __main__._display
-        for inference in self.inferenceModules:
-            inference.initialize(gameState)
-        self.ghostBeliefs = [inf.getBeliefDistribution() for inf in self.inferenceModules]
-        self.firstMove = True
-
-    def observationFunction(self, gameState):
-        "Removes the ghost states from the gameState"
-        agents = gameState.data.agentStates
-        gameState.data.agentStates = [agents[0]] + [None for i in range(1, len(agents))]
-        return gameState
-
-    def getAction(self, gameState):
-        "Updates beliefs, then chooses an action based on updated beliefs."
-        #for index, inf in enumerate(self.inferenceModules):
-        #    if not self.firstMove and self.elapseTimeEnable:
-        #        inf.elapseTime(gameState)
-        #    self.firstMove = False
-        #    if self.observeEnable:
-        #        inf.observeState(gameState)
-        #    self.ghostBeliefs[index] = inf.getBeliefDistribution()
-        #self.display.updateDistributions(self.ghostBeliefs)
-        return self.chooseAction(gameState)
-
-    def chooseAction(self, gameState):
-        
-        h=gameState.returnline(gameState)
-        a = self.weka.predict("./Classifiers/MultiPercep-t1.model", h, "./Datos/training_tutorial1-classif.arff")
-        
-        if a not in gameState.getLegalPacmanActions():
-        	a = "Stop"
-        
-        return a
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     "An agent controlled by the keyboard that displays beliefs about ghost positions."

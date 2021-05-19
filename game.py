@@ -30,6 +30,7 @@ from builtins import object
 from util import *
 import time, os
 import traceback
+from bustersAgents import IterationState
 import sys
 
 #######################
@@ -707,6 +708,12 @@ class Game(object):
             else:
                 self.state = self.state.generateSuccessor( agentIndex, action )
 
+            if agentIndex == 0:
+                state = IterationState(observation)
+                f.write(str(state)+'\n')
+                nextState = IterationState(self.state)
+                agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
+            
             # Change the display
             self.display.update( self.state.data )
             ###idx = agentIndex - agentIndex % 2 + 1

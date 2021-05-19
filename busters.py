@@ -258,7 +258,8 @@ class GameState(object):
         
         i = 0
         
-        while (i < 4):
+        vivos = len(state.getLivingGhosts())-1
+        while (i < vivos ):
             x[i+1], y[i+1] = state.getGhostPositions()[i]
             if not state.getLivingGhosts()[i+1]:
                 gState[i] = 0
