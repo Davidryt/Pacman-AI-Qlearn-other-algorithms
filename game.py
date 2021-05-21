@@ -30,7 +30,7 @@ from builtins import object
 from util import *
 import time, os
 import traceback
-from bustersAgents import IterationState
+from iterationState import IterationState
 import sys
 
 #######################
@@ -710,7 +710,6 @@ class Game(object):
 
             if agentIndex == 0:
                 state = IterationState(observation)
-                f.write(str(state)+'\n')
                 nextState = IterationState(self.state)
                 agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
             

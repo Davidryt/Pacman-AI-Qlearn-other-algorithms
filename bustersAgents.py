@@ -22,10 +22,10 @@ from keyboardAgents import KeyboardAgent
 from learningAgents import ReinforcementAgent
 import inference
 import busters as otro
+from iterationState import IterationState
 import os
 import numpy as np
 
-from wekaI import Weka
 
 class BustersAgent(object):
     "An agent that tracks and displays its beliefs about ghost positions."
@@ -34,7 +34,6 @@ class BustersAgent(object):
         inferenceType = util.lookup(inference, globals())
         self.inferenceModules = [inferenceType(a) for a in ghostAgents]
         self.observeEnable = observeEnable
-
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -64,8 +63,8 @@ class BustersAgent(object):
         return self.chooseAction(gameState)
 
     def chooseAction(self, gameState):
- 
-        a = "Stop" 
+
+        a = "Stop"
         return a
 
 
@@ -153,9 +152,7 @@ class QLearningAgent(BustersAgent):
         """
         position = self.computePosition(state)
         action_column = self.actions[action]
-        print(action_column)
-        print(position)
-        print(self.q_table)
+
         return self.q_table[position][action_column]
 
 
@@ -183,7 +180,7 @@ class QLearningAgent(BustersAgent):
 
         best_actions = [legalActions[0]]
         if 'Stop' in legalActions: 
-        	legalActions.remove("Stop")
+            legalActions.remove("Stop")
         best_value = self.getQValue(state, legalActions[0])
         for action in legalActions:
             value = self.getQValue(state, action)
@@ -222,16 +219,16 @@ class QLearningAgent(BustersAgent):
     def update(self, state, action, nextState, reward):
         
         action = self.computeActionFromQValues(nextState)
-        if bestAction == None:
+        if action == None:
                 return
         
         position = self.computePosition(state)
         action_column = self.actions[action]
-        qvalue = (1 - self.alpha) * self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
-		
+        qvalue = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getQValue(nextState, action))
+
         self.q_table[position][action_column] = qvalue
         self.writeQtable()
-        
+
 
 
     def getPolicy(self, state):
@@ -244,15 +241,16 @@ class QLearningAgent(BustersAgent):
        
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         reward = 0
-        if(self.getdisnear(gameState)<self.getdisnear(nextGameState)):
 
+        if self.getdistnear(nextGameState) < self.getdistnear(gameState):
             reward += 15
-    	
+        else:
+            reward -= 5
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
             reward += 150
         if nextGameState.getNumFood() < gameState.getNumFood():
             reward += 75
-            
+        print(reward)
         return reward
 
     def getdistnear(self, gameState):
@@ -270,96 +268,9 @@ class QLearningAgent(BustersAgent):
             if gameState.getNoisyGhostDistances()[i] == None:
                 d[i] = 9999
             i+=1
-            
+
         GhostDistance=d[closestGhost]
         return GhostDistance
-
-class IterationState ():
-
-    def __init__(self, gameState):
-        self.nearestdirection = self.getDir(gameState)
-        self.legal_actions = gameState.getLegalActions()
-        self.food = self.isFood(gameState)
-        
-    def isFood(self, gameState):
-    	if gameState.getNumFood()!=0 :
-    	    return 1
-    	else:
-    	    return 0
-    
-    def getDir(self, gameState):
-    	
-        [x,y] = gameState.getPacmanPosition()
-        available_actions = gameState.getLegalActions().copy()
-        pacmanDirection = gameState.data.agentStates[0].getDirection()
-
-
-        if len(available_actions) > 2:
-            if pacmanDirection == "North":
-                available_actions.remove("South")
-            elif pacmanDirection == "South":
-                available_actions.remove("North")
-            if pacmanDirection == "East":
-                available_actions.remove("West")
-            elif pacmanDirection == "West":
-                available_actions.remove("East")
-                
-        #stop as an action????? REVIEW
-
-        available_actions.remove("Stop")
-
-            
-        move = "Stop" 
-        
- 
-        
-        i = 0
-        closestGhost = 0
-        d = [0,0,0,0]
-        vivos = len(gameState.getLivingGhosts())-1
-        while (i < vivos ):
-            if not gameState.getLivingGhosts()[i+1]:
-                d[i] = 9999
-            else:
-                d[i] = gameState.getNoisyGhostDistances()[i]
-                if d[i] < d[closestGhost]:
-                    closestGhost = i
-            if gameState.getNoisyGhostDistances()[i] == None:
-                d[i] = 9999
-            i+=1
-            
-        GhostDistance=d[closestGhost]
-        FoodDistance = gameState.getDistanceNearestFood()
-        if FoodDistance == None :
-        	FoodDistance = 0
-		
-        if FoodDistance < GhostDistance and FoodDistance != 0:
-			
-			#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL
-            move="Stop"
-		
-        elif GhostDistance <= FoodDistance and GhostDistance != 0:
-            ghostPosition = gameState.getGhostPositions()[closestGhost]
-            if len(available_actions) > 1: 
-                if y < ghostPosition[1] and "North" in legal:
-                    move = "North"
-                elif y > ghostPosition[1] and "South" in legal:
-                    move = "South"
-                if x < ghostPosition[0] and "East" in legal:
-                    move = "East"
-                if x > ghostPosition[0] and "West" in legal:
-                    move = "West"
-                elif move == "Stop" and pacmanDirection in legal:
-                    move = pacmanDirection
-
-            else: 
-                move = available_actions[0]
-		        
-
-        return move
-		
-    def getLegalActionsRemaining(self):
-        return self.legal_actions
 
 
 class NullGraphics(object):
