@@ -152,8 +152,8 @@ class GameState(object):
             
 
         d[4] = state.getDistanceNearestFood()
-        global nearestFood
-        distanceFood=state.getDistanceNearestFood()
+        nearestFood = state.getPositionNearestFood()
+        distanceFood = state.getDistanceNearestFood()
         print(distanceFood)
         if(distanceFood == None):
             distanceFood = 0
@@ -313,7 +313,7 @@ class GameState(object):
         scoreNext += state.getScore()
 
         distanceFood = state.getDistanceNearestFood()
-        
+        nearestFood = state.getPositionNearestFood()
         if(distanceFood == None):
             distanceFood = 0
             foodX = 0
@@ -510,8 +510,24 @@ class GameState(object):
         """
         Returns the distance to the nearest food
         """
-        global nearestFood
         if(self.getNumFood() > 0):
+            minDistance = 900000
+            pacmanPosition = self.getPacmanPosition()
+            for i in range(self.data.layout.width):
+                for j in range(self.data.layout.height):
+                    if self.hasFood(i, j):
+                        foodPosition = i, j
+                        distance = util.manhattanDistance(pacmanPosition, foodPosition)
+                        if distance < minDistance:
+                            minDistance = distance
+            return minDistance
+
+        else:
+            return None;
+
+    def getPositionNearestFood(self):
+        if (self.getNumFood() > 0):
+            nearestFood = 0, 0
             minDistance = 900000
             pacmanPosition = self.getPacmanPosition()
             for i in range(self.data.layout.width):
@@ -522,7 +538,7 @@ class GameState(object):
                         if distance < minDistance:
                             nearestFood = i, j
                             minDistance = distance
-            return minDistance
+            return nearestFood
 
         else:
             return None;

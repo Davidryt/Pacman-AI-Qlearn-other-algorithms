@@ -80,7 +80,7 @@ class QLearningAgent(BustersAgent):
             self.table_file = open("qtable.txt", "w+")
             self.initQtable(10) #Temporal number, will depend on our args chosen
         
-        self.epsilon = 0.2
+        self.epsilon = 0.3
         self.alpha = 0.1
         self.discount = 0.8
     
@@ -92,13 +92,10 @@ class QLearningAgent(BustersAgent):
         "Read qtable from disc"
         table = self.table_file.readlines()
         q_table = []
-
         for i, line in enumerate(table):
             row = line.split()
             row = [float(x) for x in row]
             q_table.append(row)
-            
-
         return q_table
 
     def writeQtable(self):
@@ -225,7 +222,7 @@ class QLearningAgent(BustersAgent):
         position = self.computePosition(state)
         action_column = self.actions[action]
         qvalue = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getQValue(nextState, best_action))
-
+        print("ee", position, state.nearestdirection)
         self.q_table[position][action_column] = qvalue
         self.writeQtable()
 
@@ -248,14 +245,17 @@ class QLearningAgent(BustersAgent):
 
         if self.getdistnear(nextGameState) < self.getdistnear(gameState):
             reward += 15
-        else:
+        elif self.getdistnear(nextGameState) > self.getdistnear(gameState):
             reward -= 5
+        if gameState.getNumFood() > 0 and nextGameState.getNumFood() > 0:
+            if nextGameState.getDistanceNearestFood() < gameState.getDistanceNearestFood():
+                reward += 5
+        if nextGameState.getNumFood() < gameState.getNumFood():
+            reward += 75
         if directions[dir] == -directions[next_dir]:
             reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
             reward += 150
-        if nextGameState.getNumFood() < gameState.getNumFood():
-            reward += 75
         return reward
 
     def getdistnear(self, gameState):

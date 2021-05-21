@@ -4,7 +4,6 @@ class IterationState():
         self.nearestdirection = self.getDir(gameState)
         self.legal_actions = gameState.getLegalActions()
         self.food = self.isFood(gameState)
-        self.ghosts = self.countGhosts(gameState)
 
     def countGhosts(self, gameState):
         count = 0
@@ -26,15 +25,6 @@ class IterationState():
         available_actions = gameState.getLegalActions().copy()
         pacmanDirection = gameState.data.agentStates[0].getDirection()
 
-        if len(available_actions) > 2:
-            if pacmanDirection == "North":
-                available_actions.remove("South")
-            elif pacmanDirection == "South":
-                available_actions.remove("North")
-            if pacmanDirection == "East":
-                available_actions.remove("West")
-            elif pacmanDirection == "West":
-                available_actions.remove("East")
 
         # stop as an action????? REVIEW
 
@@ -62,10 +52,24 @@ class IterationState():
         if FoodDistance == None:
             FoodDistance = 9999
 
-        if FoodDistance < GhostDistance and FoodDistance != 0:
+        if FoodDistance < GhostDistance and FoodDistance != 9999:
+            FoodPosition = gameState.getPositionNearestFood()
 
-            # TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL#TEMPORAL
-            move = "Stop"
+            if len(available_actions) > 1:
+                if y < FoodPosition[1] and "North" in available_actions:
+                    move = "North"
+                elif y > FoodPosition[1] and "South" in available_actions:
+                    move = "South"
+                if x < FoodPosition[0] and "East" in available_actions:
+                    move = "East"
+                if x > FoodPosition[0] and "West" in available_actions:
+                    move = "West"
+                elif move == "Stop" and pacmanDirection in available_actions:
+                    move = pacmanDirection
+
+            else:
+                if len(available_actions) > 0:
+                    move = available_actions[0]
 
         elif GhostDistance <= FoodDistance and GhostDistance != 0:
             ghostPosition = gameState.getGhostPositions()[closestGhost]
