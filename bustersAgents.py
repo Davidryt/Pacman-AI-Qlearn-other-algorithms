@@ -81,8 +81,8 @@ class QLearningAgent(BustersAgent):
             self.initQtable(9)
         
         self.epsilon = 0.3
-        self.alpha = 0.1
-        self.discount = 0.8
+        self.alpha = 0.15
+        self.discount = 0.7
     
     def initQtable(self,rows):
         self.q_table = np.zeros((rows,len(self.actions)))
@@ -221,7 +221,6 @@ class QLearningAgent(BustersAgent):
         position = self.computePosition(state)
         action_column = self.actions[action]
         qvalue = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getQValue(nextState, best_action))
-        print("ee", position, state.nearestdirection)
         self.q_table[position][action_column] = qvalue
         self.writeQtable()
 
