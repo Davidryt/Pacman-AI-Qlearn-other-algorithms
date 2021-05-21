@@ -60,7 +60,7 @@ class IterationState():
         GhostDistance = d[closestGhost]
         FoodDistance = gameState.getDistanceNearestFood()
         if FoodDistance == None:
-            FoodDistance = 0
+            FoodDistance = 9999
 
         if FoodDistance < GhostDistance and FoodDistance != 0:
 
@@ -82,7 +82,8 @@ class IterationState():
                     move = pacmanDirection
 
             else:
-                move = available_actions[0]
+                if len(available_actions) > 0:
+                    move = available_actions[0]
 
         return move
 

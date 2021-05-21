@@ -135,6 +135,7 @@ class QLearningAgent(BustersAgent):
         Compute the row of the qtable for a given state.
         
         """
+
         if state.nearestdirection == 'Stop':
             return 9
 
@@ -184,13 +185,11 @@ class QLearningAgent(BustersAgent):
         best_value = self.getQValue(state, legalActions[0])
         for action in legalActions:
             value = self.getQValue(state, action)
-            print(action, value)
             if value == best_value:
                 best_actions.append(action)
             if value > best_value:
                 best_actions = [action]
                 best_value = value
-                print(best_actions, best_value)
         return random.choice(best_actions)
 
     def getAction(self, state):
@@ -212,7 +211,6 @@ class QLearningAgent(BustersAgent):
 
         flip = util.flipCoin(self.epsilon)
         best = self.getPolicy(qstate)
-        print(best)
         if flip:
             return random.choice(legalActions)
         return best
@@ -258,7 +256,6 @@ class QLearningAgent(BustersAgent):
             reward += 150
         if nextGameState.getNumFood() < gameState.getNumFood():
             reward += 75
-        print(reward)
         return reward
 
     def getdistnear(self, gameState):
