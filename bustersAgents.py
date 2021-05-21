@@ -78,7 +78,7 @@ class QLearningAgent(BustersAgent):
             self.q_table = self.readQtable()
         else:
             self.table_file = open("qtable.txt", "w+")
-            self.initQtable(10) #Temporal number, will depend on our args chosen
+            self.initQtable(9)
         
         self.epsilon = 0.3
         self.alpha = 0.1
@@ -134,10 +134,9 @@ class QLearningAgent(BustersAgent):
         """
 
         if state.nearestdirection == 'Stop':
-            return 9
+            return 8
 
-        row = {'North':0, 'East':2, 'South':4, 'West':6}[state.nearestdirection]
-        row += state.food
+        row = {'North':0, 'East':1, 'South':2, 'West':3, 'NorthEast':4, 'NorthWest':5, 'SouthEast':6, 'SouthWest':7}[state.nearestdirection]
         return row
 
 
@@ -247,11 +246,6 @@ class QLearningAgent(BustersAgent):
             reward += 15
         elif self.getdistnear(nextGameState) > self.getdistnear(gameState):
             reward -= 5
-        if gameState.getNumFood() > 0 and nextGameState.getNumFood() > 0:
-            if nextGameState.getDistanceNearestFood() < gameState.getDistanceNearestFood():
-                reward += 5
-        if nextGameState.getNumFood() < gameState.getNumFood():
-            reward += 75
         if directions[dir] == -directions[next_dir]:
             reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
