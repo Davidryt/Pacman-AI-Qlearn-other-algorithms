@@ -78,14 +78,14 @@ class QLearningAgent(BustersAgent):
             self.q_table = self.readQtable()
         else:
             self.table_file = open("qtable.txt", "w+")
-            self.initQtable(20) #Temporal number, will depend on our args chosen
+            self.initQtable(10) #Temporal number, will depend on our args chosen
         
-        self.epsilon = 0.5
-        self.alpha = 0.5
-        self.discount = 0.5	
+        self.epsilon = 0.2
+        self.alpha = 0.1
+        self.discount = 0.8
     
     def initQtable(self,rows):
-    	self.q_table = np.zeros((rows,len(self.actions)))
+        self.q_table = np.zeros((rows,len(self.actions)))
 
 
     def readQtable(self):
@@ -175,21 +175,22 @@ class QLearningAgent(BustersAgent):
           you should return None.
         """
         legalActions = state.getLegalActionsRemaining()
+        if 'Stop' in legalActions:
+            legalActions.remove("Stop")
         if len(legalActions)==0:
           return None
 
         best_actions = [legalActions[0]]
-        if 'Stop' in legalActions: 
-            legalActions.remove("Stop")
         best_value = self.getQValue(state, legalActions[0])
         for action in legalActions:
             value = self.getQValue(state, action)
+            print(action, value)
             if value == best_value:
                 best_actions.append(action)
             if value > best_value:
                 best_actions = [action]
                 best_value = value
-
+                print(best_actions, best_value)
         return random.choice(best_actions)
 
     def getAction(self, state):
@@ -210,21 +211,22 @@ class QLearningAgent(BustersAgent):
              return action
 
         flip = util.flipCoin(self.epsilon)
-
+        best = self.getPolicy(qstate)
+        print(best)
         if flip:
             return random.choice(legalActions)
-        return self.getPolicy(qstate)
+        return best
 
 
     def update(self, state, action, nextState, reward):
         
-        action = self.computeActionFromQValues(nextState)
-        if action == None:
+        best_action = self.computeActionFromQValues(nextState)
+        if best_action == None:
                 return
         
         position = self.computePosition(state)
         action_column = self.actions[action]
-        qvalue = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getQValue(nextState, action))
+        qvalue = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.getQValue(nextState, best_action))
 
         self.q_table[position][action_column] = qvalue
         self.writeQtable()
@@ -242,10 +244,16 @@ class QLearningAgent(BustersAgent):
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         reward = 0
 
+        directions = {"North": 1, "South": -1, "East": 2, "West": -2, 'Stop': 0}
+        dir = gameState.data.agentStates[0].getDirection()
+        next_dir = nextGameState.data.agentStates[0].getDirection()
+
         if self.getdistnear(nextGameState) < self.getdistnear(gameState):
             reward += 15
         else:
             reward -= 5
+        if directions[dir] == -directions[next_dir]:
+            reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
             reward += 150
         if nextGameState.getNumFood() < gameState.getNumFood():
@@ -257,8 +265,7 @@ class QLearningAgent(BustersAgent):
         i = 0
         closestGhost = 0
         d = [0,0,0,0]
-        vivos = len(gameState.getLivingGhosts())-1
-        while (i < vivos ):
+        while (i < len(gameState.getNoisyGhostDistances())):
             if not gameState.getLivingGhosts()[i+1]:
                 d[i] = 9999
             else:
